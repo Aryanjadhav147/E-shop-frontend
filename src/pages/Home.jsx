@@ -14,7 +14,8 @@ function Home() {
   useEffect(() => {
     const API_URL = import.meta.env.VITE_BACKEND_URL;
 const API_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
+ console.log("API_URL:", API_URL);
+  console.log("API_KEY:", API_KEY);
 
     fetch(`${API_URL}/rest/v1/products`, {
       method: "GET",
