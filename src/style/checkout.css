@@ -1,0 +1,194 @@
+/* ===================== Checkout Container ===================== */
+.checkout-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  font-family: 'Poppins', sans-serif;
+}
+
+.checkout-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #222;
+}
+
+/* ===================== Checkout Summary ===================== */
+.checkout-summary {
+  background: #f9f9f9;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  border: 1px solid #eee;
+}
+
+.checkout-summary h3 {
+  font-size: 1.3rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.checkout-summary h3 span {
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* ===================== Checkout Form ===================== */
+.checkout-form h3 {
+  margin: 25px 0 12px;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.form-row input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: none;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+/* ===================== Payment Options ===================== */
+.payment-options {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.payment-options button {
+  flex: 1;
+  padding: 14px;
+  border: 2px solid #007bff;
+  background: #fff;
+  color: #007bff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: 0.3s ease-in-out;
+}
+
+.payment-options button.active,
+.payment-options button:hover {
+  background: #007bff;
+  color: #fff;
+}
+
+/* ===================== Place Order Button ===================== */
+.place-order {
+  width: 100%;
+  padding: 15px;
+  background: #28a745;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.place-order:hover {
+  background: #218838;
+}
+
+/* ===================== Online Payment Section ===================== */
+.online-payment-section {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.online-payment-section h4 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.online-payment-section select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+  appearance: none; /* Remove default arrow */
+  cursor: pointer;
+  transition: 0.3s;
+  margin-bottom: 15px;
+}
+
+.online-payment-section select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+/* Custom arrow icon for select */
+.online-payment-section::after {
+  content: "▼";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #555;
+  font-size: 0.8rem;
+}
+
+/* Online payment details input */
+.online-payment-section input[name="paymentDetails"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+  transition: 0.3s;
+  margin-bottom: 20px;
+}
+
+.online-payment-section input[name="paymentDetails"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* ===================== Responsive ===================== */
+@media (max-width: 600px) {
+  .checkout-container {
+    padding: 15px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .payment-options {
+    flex-direction: column;
+  }
+}

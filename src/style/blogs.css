@@ -1,0 +1,25 @@
+.page-container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #fdfdfd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-container h2 {
+  font-size: 2rem;
+  color: #1e272e;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e67e22; /* orange for blogs */
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.page-container p {
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.6;
+}

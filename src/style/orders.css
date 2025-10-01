@@ -1,0 +1,55 @@
+/* Orders Page */
+.orders-container {
+  padding: 40px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
+}
+
+.orders-container h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #333;
+  text-align: center;
+}
+
+.order-item {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.order-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.order-item h3 {
+  font-size: 1.3rem;
+  color: #0f1010;
+  margin-bottom: 10px;
+}
+
+.order-item p {
+  font-size: 1rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 600px) {
+  .orders-container {
+    padding: 20px 10px;
+  }
+
+  .order-item h3 {
+    font-size: 1.1rem;
+  }
+
+  .order-item p {
+    font-size: 0.95rem;
+  }
+}

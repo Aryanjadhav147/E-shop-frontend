@@ -1,0 +1,52 @@
+.page-container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-container h2 {
+  font-size: 2rem;
+  color: #1e272e;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #27ae60; /* green accent for contact */
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.page-container p {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 15px;
+}
+
+.page-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.page-container li {
+  font-size: 1.05rem;
+  color: #333;
+  margin: 8px 0;
+  padding-left: 25px;
+  position: relative;
+}
+
+/* ✅ Add icons using pseudo-elements */
+.page-container li::before {
+  content: "📩"; /* default icon */
+  position: absolute;
+  left: 0;
+}
+
+.page-container li:nth-child(2)::before {
+  content: "📞"; /* phone */
+}
+
+.page-container li:nth-child(3)::before {
+  content: "📍"; /* location */
+}

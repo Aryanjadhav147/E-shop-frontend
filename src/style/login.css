@@ -1,0 +1,61 @@
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background: url("/public//images//omid-armin-VYt7lu6KUWE-unsplash.jpg") no-repeat center center; /* Path to your image */
+  background-size: cover; /* Make image cover whole area */
+  font-family: 'Poppins', sans-serif;
+}
+
+.auth-page form {
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent form background */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.auth-page h2 {
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.auth-page input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.auth-page button {
+  width: 100%;
+  padding: 12px;
+  background-color: #5dade2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.auth-page button:hover {
+  background-color: #3498db;
+  transform: scale(1.05);
+}
+
+.auth-footer {
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+.auth-footer a {
+  color: #5dade2;
+  text-decoration: none;
+}
+.auth-footer a:hover {
+  text-decoration: underline;
+}
