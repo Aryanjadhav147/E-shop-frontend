@@ -36,17 +36,26 @@ function Cart({ onClose }) {
     }
 
     try {
-      // Save each cart item in the database
+      const API_URL = process.env.REACT_APP_BACKEND_URL; // Supabase URL
+      const API_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY; // Supabase anon key
+
+      // Save each cart item in Supabase
       for (const item of cart) {
-        await fetch("http://localhost:3200/orders", {
+        await fetch(`${API_URL}/rest/v1/orders`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            apikey: API_KEY,
+            Authorization: `Bearer ${API_KEY}`,
+            Prefer: "return=representation", // optional: returns the inserted row
+          },
           body: JSON.stringify({
             user_id: item.user_id,
             product_id: item.id,
             quantity: item.quantity,
             address,
             paymentMethod,
+            status: "Pending", // default status
           }),
         });
       }
@@ -84,7 +93,7 @@ function Cart({ onClose }) {
                   <img src={item.image} alt={item.name} />
                   <div>
                     <h4>{item.name}</h4>
-                    <p>${item.price}</p>
+                    <p>₹{item.price}</p>
                     <div className="quantity-controls">
                       <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
                       <span>{item.quantity}</span>
@@ -94,12 +103,10 @@ function Cart({ onClose }) {
                   </div>
                 </div>
               ))}
-              <h3>Total: ${total.toFixed(2)}</h3>
-<button className="place-order-btn" onClick={() => navigate("/checkout")}>
-  Proceed to Checkout →
-</button>
-
-
+              <h3>Total: ₹{total.toFixed(2)}</h3>
+              <button className="place-order-btn" onClick={handleProceedToAddress}>
+                Proceed to Checkout →
+              </button>
             </>
           )}
         </>

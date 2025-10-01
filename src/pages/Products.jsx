@@ -9,7 +9,7 @@ function ProductCard({ product, handleAddToCart }) {
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`}>
-        <img src={product.image} alt={product.name} />
+        <img src={product.image} alt={product.name || product.title} />
         <h3>{product.name || product.title}</h3>
       </Link>
       {product.category && <p className="category">{product.category}</p>}
@@ -27,12 +27,21 @@ function Products() {
   const [loading, setLoading] = useState(true);
   const [alertMsg, setAlertMsg] = useState("");
 
-  // Fetch products from backend
   useEffect(() => {
-    fetch("http://localhost:3200/products")
+    const API_URL = process.env.REACT_APP_BACKEND_URL; // Supabase URL
+    const API_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY; // Supabase anon key
+
+    fetch(`${API_URL}/rest/v1/products`, {
+      method: "GET",
+      headers: {
+        apikey: API_KEY,
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setProducts(data.products || []);
+        setProducts(data || []); // Supabase returns an array directly
         setLoading(false);
       })
       .catch((err) => {
@@ -54,7 +63,7 @@ function Products() {
       return;
     }
     addToCart({ ...product, user_id: user.id });
-    alert(`${product.name} added successfully!`);
+    alert(`${product.name || product.title} added successfully!`);
   };
 
   if (loading) return <p>Loading products...</p>;
@@ -64,50 +73,48 @@ function Products() {
   const categories = [...new Set(products.map((p) => p.category).filter(Boolean))];
 
   return (
+    <div className="products-page">
+      {/* Toast Notification */}
+      {alertMsg && (
+        <div
+          className={`toast ${
+            alertMsg.includes("⚠️") ? "toast-warning" : "toast-success"
+          }`}
+        >
+          {alertMsg}
+        </div>
+      )}
 
-  <div className="products-page">
-    {/* Toast Notification */}
-    {alertMsg && (
-      <div
-        className={`toast ${
-          alertMsg.includes("⚠️") ? "toast-warning" : "toast-success"
-        }`}
-      >
-        {alertMsg}
-      </div>
-    )}
-
-    {categories.length > 0
-      ? categories.map((cat) => (
-          <div key={cat} className="product-section">
-            <h2>{cat}</h2>
-            <div className="products-grid">
-              {products
-                .filter((p) => p.category === cat)
-                .map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    handleAddToCart={handleAddToCart}
-                  />
-                ))}
+      {categories.length > 0
+        ? categories.map((cat) => (
+            <div key={cat} className="product-section">
+              <h2>{cat}</h2>
+              <div className="products-grid">
+                {products
+                  .filter((p) => p.category === cat)
+                  .map((p) => (
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      handleAddToCart={handleAddToCart}
+                    />
+                  ))}
+              </div>
             </div>
-          </div>
-        ))
-      : (
-          <div className="products-grid">
-            {products.map((p) => (
-              <ProductCard
-                key={p.id}
-                product={p}
-                handleAddToCart={handleAddToCart}
-              />
-            ))}
-          </div>
-        )}
-  </div>
-);
-
+          ))
+        : (
+            <div className="products-grid">
+              {products.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  handleAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+          )}
+    </div>
+  );
 }
 
 export default Products;

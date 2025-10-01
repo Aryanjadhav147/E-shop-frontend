@@ -1,12 +1,12 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
-import { AuthContext } from "../context/AuthContext"; // make sure you have this
+import { AuthContext } from "../context/AuthContext";
 import "../style/checkout.css";
 
 function Checkout() {
   const { cart, clearCart } = useContext(CartContext);
-  const { user } = useContext(AuthContext); // get logged-in user
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -30,7 +30,7 @@ function Checkout() {
     e.preventDefault();
 
     if (!form.paymentMode) {
-      alert("Please select a payment method!");
+      alert("⚠️ Please select a payment method!");
       return;
     }
 
@@ -39,37 +39,51 @@ function Checkout() {
       return;
     }
 
+    const API_URL = process.env.REACT_APP_BACKEND_URL; // your Supabase endpoint
+    const API_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY; // your Supabase anon key
+
     const cartItems = cart.map((item) => ({
       product_id: item.id,
       quantity: item.quantity,
     }));
 
     try {
-      const response = await fetch("http://localhost:3200/orders", {
+      const response = await fetch(`${API_URL}/orders`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          apikey: API_KEY,
+          Authorization: `Bearer ${API_KEY}`,
+          Prefer: "return=representation",
+        },
         body: JSON.stringify({
           user_id: user.id,
-          cart: cartItems,
+          fullName: form.fullName,
+          phone: form.phone,
+          email: form.email,
+          pincode: form.pincode,
           address: form.address,
           paymentMode: form.paymentMode,
           onlineMethod: form.onlineMethod,
           paymentDetails: form.paymentDetails,
+          cart: cartItems,
+          status: "Pending",
         }),
       });
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok) {
         alert("✅ Order placed successfully!");
-        clearCart(); // clear cart after placing order
-        navigate("/orders"); // redirect to Orders page
+        clearCart();
+        navigate("/orders");
       } else {
-        alert("❌ Error placing order: " + data.error);
+        console.error(data);
+        alert("❌ Error placing order: " + JSON.stringify(data));
       }
     } catch (err) {
       console.error(err);
-      alert("❌ Server error");
+      alert("❌ Server error. Please try again later.");
     }
   };
 

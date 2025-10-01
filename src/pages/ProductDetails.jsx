@@ -13,12 +13,22 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch product from backend
-    fetch(`http://localhost:3200/products/${id}`)
+    const API_URL = process.env.REACT_APP_BACKEND_URL; // Supabase URL
+    const API_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY; // Supabase anon key
+
+    // Supabase REST query for a single product
+    fetch(`${API_URL}/rest/v1/products?id=eq.${id}`, {
+      method: "GET",
+      headers: {
+        apikey: API_KEY,
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    })
       .then(res => res.json())
       .then(data => {
-        if (data.success) {
-          setProduct(data.product);
+        if (data.length > 0) {
+          setProduct(data[0]); // Supabase returns an array
         }
         setLoading(false);
       })
@@ -44,7 +54,7 @@ function ProductDetails() {
     <div className="product-details-container">
       <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
       <div className="product-details-card">
-<img src={`/${product.image}`} alt={product.name} />
+        <img src={product.image} alt={product.name} />
         <div className="product-info">
           <h2>{product.name}</h2>
           {product.category && <p className="category">Category: {product.category}</p>}
