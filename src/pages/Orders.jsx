@@ -9,9 +9,8 @@ function Orders() {
 
   useEffect(() => {
     if (!user) return;
-
-    const API_URL = process.env.REACT_APP_BACKEND_URL; // Supabase URL
-    const API_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY; // Supabase anon key
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+const API_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
     // Supabase query: orders where user_id = current user
     fetch(`${API_URL}/rest/v1/orders?user_id=eq.${user.id}`, {
