@@ -2,6 +2,8 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import db from "../firebaseConfig";
 import "../style/checkout.css";
 
 function Checkout() {
@@ -39,51 +41,37 @@ function Checkout() {
       return;
     }
 
-   const API_URL = import.meta.env.VITE_BACKEND_URL;
-const API_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-    const cartItems = cart.map((item) => ({
-      product_id: item.id,
-      quantity: item.quantity,
-    }));
+    const orderData = {
+      user_id: user.uid || user.id,
+      fullName: form.fullName,
+      phone: form.phone,
+      email: form.email,
+      pincode: form.pincode,
+      address: form.address,
+      paymentMode: form.paymentMode,
+      onlineMethod: form.onlineMethod || "",
+      paymentDetails: form.paymentDetails || "",
+      status: "Pending",
+      totalAmount: total,
+      createdAt: Timestamp.now(),
+      cart: cart.map((item) => ({
+        product_id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+      })),
+    };
 
     try {
-      const response = await fetch(`${API_URL}/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: API_KEY,
-          Authorization: `Bearer ${API_KEY}`,
-          Prefer: "return=representation",
-        },
-        body: JSON.stringify({
-          user_id: user.id,
-          fullName: form.fullName,
-          phone: form.phone,
-          email: form.email,
-          pincode: form.pincode,
-          address: form.address,
-          paymentMode: form.paymentMode,
-          onlineMethod: form.onlineMethod,
-          paymentDetails: form.paymentDetails,
-          cart: cartItems,
-          status: "Pending",
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("✅ Order placed successfully!");
-        clearCart();
-        navigate("/orders");
-      } else {
-        console.error(data);
-        alert("❌ Error placing order: " + JSON.stringify(data));
-      }
+      const ordersCollection = collection(db, "orders");
+      await addDoc(ordersCollection, orderData);
+      alert("✅ Order placed successfully!");
+      clearCart();
+      navigate("/orders");
     } catch (err) {
-      console.error(err);
-      alert("❌ Server error. Please try again later.");
+      console.error("Error placing order:", err);
+      alert("❌ Error placing order. Please try again later.");
     }
   };
 

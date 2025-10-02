@@ -1,35 +1,31 @@
+// src/pages/Login.jsx
 import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom"; // ✅ useNavigate
-import "../style/login.css"
+import { useNavigate, Link } from "react-router-dom";
+import { login as firebaseLogin } from "../firebase/auth.js"; // login from firebase
+import { AuthContext } from "../context/AuthContext"; // ✅ import AuthContext
+import "../style/login.css";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const { login } = useContext(AuthContext); // ✅ get login function from context
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate(); // ✅ initialize navigation
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await fetch("http://localhost:3200/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        login(data.user);
+      const result = await firebaseLogin(email, password); // call Firebase login
+      if (result.success) {
+        login(result.user); // ✅ update AuthContext
         alert("✅ Logged in successfully!");
-        navigate("/"); // ✅ redirect to home page
+        navigate("/"); // redirect to home
       } else {
-        alert(data.error || "❌ Login failed");
+        alert("❌ Login failed: " + result.error);
       }
     } catch (err) {
       console.error(err);
-      alert("⚠️ Server error");
+      alert("⚠️ Something went wrong: " + err.message);
     }
   };
 
@@ -38,10 +34,10 @@ function Login() {
       <form onSubmit={handleLogin}>
         <h2>Login</h2>
         <input
-          type="text"
-          placeholder="Enter username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          type="email"
+          placeholder="Enter email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input

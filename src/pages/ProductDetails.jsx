@@ -2,10 +2,12 @@ import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
-import "../style/productdetails.css"
+import { doc, getDoc } from "firebase/firestore";
+import db from "../firebaseConfig";
+import "../style/productdetails.css";
 
 function ProductDetails() {
-  const { id } = useParams(); // Get product ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
@@ -13,38 +15,38 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   const API_URL = import.meta.env.VITE_BACKEND_URL;
-const API_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const fetchProduct = async () => {
+      try {
+        if (!id) return;
 
-    // Supabase REST query for a single product
-    fetch(`${API_URL}/rest/v1/products?id=eq.${id}`, {
-      method: "GET",
-      headers: {
-        apikey: API_KEY,
-        Authorization: `Bearer ${API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.length > 0) {
-          setProduct(data[0]); // Supabase returns an array
+        // Firestore doc reference
+        const docRef = doc(db, "products", id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setProduct({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          setProduct(null);
         }
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        setProduct(null);
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
   const handleAddToCart = () => {
     if (!user) {
-      alert("Please login first!");
+      alert("⚠️ Please login first!");
       return;
     }
+    if (!product) return;
     addToCart({ ...product, user_id: user.id });
-    alert(`${product.name} added to cart!`);
+    alert(`✅ ${product.name} added to cart!`);
   };
 
   if (loading) return <p>Loading product...</p>;

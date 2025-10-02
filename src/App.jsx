@@ -13,6 +13,7 @@ import Checkout from "./pages/Checkout";   // ✅ Import Checkout
 import About from "./pages/About";
 import Blogs from "./pages/Blogs";
 import Contact from "./pages/Contact";
+import UserProfile from "./pages/UserProfile";
 
 
 function App() {
@@ -23,9 +24,11 @@ function App() {
       <Navbar openCart={() => setIsCartOpen(true)} />
       {isCartOpen && <Cart onClose={() => setIsCartOpen(false)} />}
 
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/profile" element={<UserProfile/>}/>
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

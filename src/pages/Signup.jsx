@@ -1,43 +1,35 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom"; // ✅ import useNavigate
-import "../style/login.css" // optional: use same styling as Login page
+// src/pages/Signup.jsx
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { signup } from "../firebase/auth.js"; // ✅ import signup from auth.js
+import "../style/login.css";
 
 function Signup() {
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // ✅ confirm password
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate(); // ✅ initialize navigate
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    // ✅ check if passwords match
     if (password !== confirmPassword) {
       alert("❌ Passwords do not match!");
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:3200/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        login(data.user); // optional: auto-login after signup
+      const result = await signup(email, password, username);
+      if (result.success) {
         alert("🎉 Account created successfully!");
-        navigate("/"); // ✅ redirect to home page
+        navigate("/login"); // redirect to login page
       } else {
-        alert(data.error || "❌ Signup failed");
+        alert("❌ Signup failed: " + result.error);
       }
     } catch (err) {
       console.error(err);
-      alert("⚠️ Server error");
+      alert("⚠️ Something went wrong: " + err.message);
     }
   };
 
@@ -47,21 +39,28 @@ function Signup() {
         <h2>Sign Up</h2>
         <input
           type="text"
-          placeholder="Choose a username"
+          placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
           type="password"
-          placeholder="Choose a password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Confirm password"
+          placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required

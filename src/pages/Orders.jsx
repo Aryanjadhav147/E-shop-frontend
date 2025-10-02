@@ -1,6 +1,8 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import "../style/orders.css"
+import { collection, query, where, getDocs } from "firebase/firestore";
+import db from "../firebaseConfig";
+import "../style/orders.css";
 
 function Orders() {
   const { user } = useContext(AuthContext);
@@ -9,42 +11,50 @@ function Orders() {
 
   useEffect(() => {
     if (!user) return;
-const API_URL = import.meta.env.VITE_BACKEND_URL;
-const API_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-    // Supabase query: orders where user_id = current user
-    fetch(`${API_URL}/rest/v1/orders?user_id=eq.${user.id}`, {
-      method: "GET",
-      headers: {
-        apikey: API_KEY,
-        Authorization: `Bearer ${API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        setOrders(data || []); // Supabase returns array
+    const fetchOrders = async () => {
+      try {
+        // Query orders for the logged-in user
+        const q = query(collection(db, "orders"), where("user_id", "==", user.uid));
+        const snapshot = await getDocs(q);
+        const ordersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setOrders(ordersList);
         setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchOrders();
   }, [user]);
 
-  if (!user) return <p>Please login to see your orders.</p>;
-  if (loading) return <p>Loading orders...</p>;
-  if (orders.length === 0) return <p>You have not placed any orders yet.</p>;
+  if (!user) return <p>⚠️ Please login to view your orders.</p>;
+  if (loading) return <p>Loading your orders...</p>;
+  if (orders.length === 0) return <p>No orders placed yet.</p>;
 
   return (
     <div className="orders-container">
-      <h2>My Orders</h2>
-      {orders.map(order => (
-        <div key={order.id} className="order-item">
-          <h3>{order.product_name}</h3>
-          <p>Price: ₹{order.product_price}</p>
-          <p>Quantity: {order.quantity}</p>
-          <p>Status: {order.status}</p>
+      <h2>Your Orders</h2>
+      {orders.map((order) => (
+        <div className="order-card" key={order.id}>
+          <h3>Order ID: {order.id}</h3>
+          <p>Status: <strong>{order.status}</strong></p>
+          <p>Payment Mode: {order.paymentMode}</p>
+          {order.paymentMode === "Online" && <p>Method: {order.onlineMethod}</p>}
+          <p>Shipping Address: {order.address}</p>
+          <h4>Products:</h4>
+          <ul>
+            {order.cart?.map((item, index) => (
+              <li key={index}>
+                {item.name} - Qty: {item.quantity} - ₹{item.price * item.quantity}
+              </li>
+            ))}
+          </ul>
+          <h4>
+            Total: ₹
+            {order.cart?.reduce((acc, item) => acc + item.price * item.quantity, 0)}
+          </h4>
         </div>
       ))}
     </div>

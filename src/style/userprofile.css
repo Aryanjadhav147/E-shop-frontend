@@ -1,0 +1,77 @@
+.user-profile-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.profile-card {
+  flex: 1 1 250px;
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.profile-card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.profile-card p {
+  margin: 0.3rem 0;
+  color: #555;
+}
+
+.logout-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+.user-details {
+  flex: 2 1 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.user-orders, .user-cart-summary {
+  background-color: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.user-orders h3, .user-cart-summary h3 {
+  margin-bottom: 1rem;
+}
+
+.user-orders ul {
+  list-style: none;
+  padding: 0;
+}
+
+.user-orders li {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}

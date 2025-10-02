@@ -24,12 +24,13 @@ function Navbar({ openCart }) {
         {user && (
           <li>
             <button className="cart-btn" onClick={openCart} data-count={totalItems}>
-              🛒 Cart
+               Cart
             </button>
           </li>
         )}
-
+<li><Link to="/profile">profile</Link></li>
         {user && <li><Link to="/orders">Orders</Link></li>}
+
       </ul>
 
       {/* Auth Buttons */}

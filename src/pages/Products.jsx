@@ -3,13 +3,20 @@ import { Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import "../style/products.css";
+import { collection, getDocs } from "firebase/firestore";
+import db from "../firebaseConfig";
 
 // Product Card Component
 function ProductCard({ product, handleAddToCart }) {
+  // Prepend leading slash to match public folder path
+  const imageUrl = product.image.startsWith("/")
+    ? product.image
+    : `/${product.image}`;
+
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`}>
-        <img src={product.image} alt={product.name || product.title} />
+        <img src={imageUrl} alt={product.name || product.title} />
         <h3>{product.name || product.title}</h3>
       </Link>
       {product.category && <p className="category">{product.category}</p>}
@@ -19,72 +26,56 @@ function ProductCard({ product, handleAddToCart }) {
   );
 }
 
+
+
 function Products() {
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, toast } = useContext(CartContext);
   const { user } = useContext(AuthContext);
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [alertMsg, setAlertMsg] = useState("");
 
+  // Fetch products from Firestore
   useEffect(() => {
-   const API_URL = import.meta.env.VITE_BACKEND_URL;
-const API_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const fetchProducts = async () => {
+      try {
+        const productsCollection = collection(db, "products");
+        const snapshot = await getDocs(productsCollection);
+        const productsList = snapshot.docs.map((doc) => ({
+  ...doc.data(),
+  id: doc.id,  // put it last
+  quantity: 1,
+}));
 
-
-    fetch(`${API_URL}/rest/v1/products`, {
-      method: "GET",
-      headers: {
-        apikey: API_KEY,
-        Authorization: `Bearer ${API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data || []); // Supabase returns an array directly
+        setProducts(productsList);
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching products:", err);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchProducts();
   }, []);
 
-  // Auto-hide alert after 2 seconds
-  useEffect(() => {
-    if (!alertMsg) return;
-    const timer = setTimeout(() => setAlertMsg(""), 2000);
-    return () => clearTimeout(timer);
-  }, [alertMsg]);
-
+  // Handle add to cart
   const handleAddToCart = (product) => {
     if (!user) {
-      alert("Please login first!");
+      alert("⚠️ Please login first!");
       return;
     }
-    addToCart({ ...product, user_id: user.id });
-    alert(`${product.name || product.title} added successfully!`);
+    addToCart({ ...product, user_id: user.uid || user.id });
   };
 
   if (loading) return <p>Loading products...</p>;
   if (!products.length) return <p>No products available</p>;
 
-  // Group products by category if available
   const categories = [...new Set(products.map((p) => p.category).filter(Boolean))];
 
   return (
     <div className="products-page">
-      {/* Toast Notification */}
-      {alertMsg && (
-        <div
-          className={`toast ${
-            alertMsg.includes("⚠️") ? "toast-warning" : "toast-success"
-          }`}
-        >
-          {alertMsg}
-        </div>
-      )}
+      {/* Toast Notification from CartContext */}
+      {toast && <div className="toast">{toast}</div>}
 
       {categories.length > 0
         ? categories.map((cat) => (
