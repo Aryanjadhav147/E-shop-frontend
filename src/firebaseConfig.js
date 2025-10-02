@@ -1,22 +1,26 @@
 // firebaseConfig.js
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-// Firebase project configuration
+// Firebase configuration using environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyBcid3Ofk8qfjoSXeItIKJZ60aK_kGig2w",
-  authDomain: "e-shop-database-e7917.firebaseapp.com",
-  projectId: "e-shop-database-e7917",
-  storageBucket: "e-shop-database-e7917.appspot.com", // fixed .app to .appspot.com
-  messagingSenderId: "303890735665",
-  appId: "1:303890735665:web:15ed462eca14c44f226b10",
-  measurementId: "G-6NXDMRPB5X"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Get Firestore database reference
+// Firestore reference
 const db = getFirestore(app);
 
-export default db;
+// Auth reference
+const auth = getAuth(app);
+
+export { db, auth };
