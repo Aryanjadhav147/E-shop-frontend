@@ -12,19 +12,26 @@ function Orders() {
   useEffect(() => {
     if (!user) return;
 
-    const fetchOrders = async () => {
-      try {
-       
-        const q = query(collection(db, "orders"), where("user_id", "==", user.uid));
-        const snapshot = await getDocs(q);
-        const ordersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setOrders(ordersList);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-        setLoading(false);
-      }
-    };
+   const fetchOrders = async () => {
+  try {
+    console.log("Current logged in user:", user); // Debug log
+
+    const q = query(
+      collection(db, "orders"),
+      where("user_id", "==", user.id)  // ✅ use id from context
+    );
+
+    const snapshot = await getDocs(q);
+    const ordersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setOrders(ordersList);
+    setLoading(false);
+  } catch (err) {
+    console.error("Error fetching orders:", err);
+    setLoading(false);
+  }
+};
+
+
 
     fetchOrders();
   }, [user]);
