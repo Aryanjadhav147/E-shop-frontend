@@ -19,20 +19,22 @@ function UserProfile() {
       return;
     }
 
-    const fetchOrders = async () => {
-      try {
-        const ordersRef = collection(db, "orders");
-        const q = query(ordersRef, where("user_id", "==", user.uid));
-        const snapshot = await getDocs(q);
-        const ordersList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setOrders(ordersList);
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-      }
-    };
+   const fetchOrders = async () => {
+  try {
+    console.log("Current user in context:", user); // ✅ debug
+    const ordersRef = collection(db, "orders");
+    const q = query(ordersRef, where("user_id", "==", user.id)); // ✅ use user.id
+    const snapshot = await getDocs(q);
+    const ordersList = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setOrders(ordersList);
+  } catch (err) {
+    console.error("Error fetching orders:", err);
+  }
+};
+
 
     fetchOrders();
   }, [user, navigate]);
