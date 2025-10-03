@@ -13,17 +13,26 @@ function ProductDetails() {
   const { user } = useContext(AuthContext);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        if (!id) return;
+        if (!id) {
+          setLoading(false);
+          return;
+        }
 
         const docRef = doc(db, "products", id);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setProduct({ id: docSnap.id, ...docSnap.data() });
+          const productData = { id: docSnap.id, ...docSnap.data() };
+          // Ensure image path is correct
+          if (productData.image && !productData.image.startsWith("/")) {
+            productData.image = `/${productData.image}`;
+          }
+          setProduct(productData);
         } else {
           setProduct(null);
         }
@@ -40,28 +49,89 @@ function ProductDetails() {
 
   const handleAddToCart = () => {
     if (!user) {
-      alert(" Please login first!");
+      alert("⚠️ Please login first!");
       return;
     }
     if (!product) return;
-    addToCart({ ...product, user_id: user.id });
-    alert(` ${product.name} added to cart!`);
+
+    addToCart({ 
+      ...product, 
+      quantity: quantity,
+      user_id: user.uid || user.id 
+    });
+    alert(`✅ ${product.name} (${quantity}) added to cart!`);
   };
 
-  if (loading) return <p>Loading product...</p>;
-  if (!product) return <p>Product not found.</p>;
+  const incrementQuantity = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const decrementQuantity = () => {
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="product-details-container">
+        <p>Loading product details...</p>
+      </div>
+    );
+  }
+
+  // Product not found
+  if (!product) {
+    return (
+      <div className="product-details-container">
+        <button className="back-btn" onClick={() => navigate(-1)}>
+          ← Back
+        </button>
+        <p>❌ Product not found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="product-details-container">
-      <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
+
       <div className="product-details-card">
-        <img src={product.image} alt={product.name} />
+        <img 
+          src={product.image} 
+          alt={product.name}
+          onError={(e) => {
+            e.target.src = "/images/placeholder.png";
+          }}
+        />
+        
         <div className="product-info">
           <h2>{product.name}</h2>
-          {product.category && <p className="category">Category: {product.category}</p>}
-          <p className="price">Price: ₹{product.price}</p>
-          <p className="description">{product.description || "No description available."}</p>
-          <button className="add-to-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
+
+          {product.category && (
+            <p className="category">📂 {product.category}</p>
+          )}
+
+          <p className="price">₹{product.price?.toFixed(2) || "0.00"}</p>
+
+          <p className="description">
+            {product.description || "No description available for this product."}
+          </p>
+
+          {/* Quantity Selector */}
+          <div className="quantity-selector">
+            <label>Quantity:</label>
+            <div className="quantity-controls">
+              <button onClick={decrementQuantity}>−</button>
+              <span>{quantity}</span>
+              <button onClick={incrementQuantity}>+</button>
+            </div>
+          </div>
+
+          <button className="add-to-cart-btn" onClick={handleAddToCart}>
+            Add to Cart
+          </button>
         </div>
       </div>
     </div>

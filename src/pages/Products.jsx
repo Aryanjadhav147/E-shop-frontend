@@ -9,24 +9,30 @@ import db from "../firebaseConfig";
 // Product Card Component
 function ProductCard({ product, handleAddToCart }) {
   // Prepend leading slash to match public folder path
-  const imageUrl = product.image.startsWith("/")
+  const imageUrl = product.image?.startsWith("/")
     ? product.image
     : `/${product.image}`;
 
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`}>
-        <img src={imageUrl} alt={product.name || product.title} />
+        <img 
+          src={imageUrl} 
+          alt={product.name || product.title}
+          onError={(e) => {
+            e.target.src = "/images/placeholder.png";
+          }}
+        />
         <h3>{product.name || product.title}</h3>
       </Link>
       {product.category && <p className="category">{product.category}</p>}
-      <p className="price">₹{product.price}</p>
-      <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
+      <p className="price">₹{product.price?.toFixed(2) || "0.00"}</p>
+      <button onClick={() => handleAddToCart(product)}>
+        Add to Cart
+      </button>
     </div>
   );
 }
-
-
 
 function Products() {
   const { addToCart, toast } = useContext(CartContext);
@@ -34,18 +40,19 @@ function Products() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const productsCollection = collection(db, "products");
         const snapshot = await getDocs(productsCollection);
         const productsList = snapshot.docs.map((doc) => ({
-  ...doc.data(),
-  id: doc.id,  
-  quantity: 1,
-}));
+          ...doc.data(),
+          id: doc.id,
+          quantity: 1,
+        }));
 
         setProducts(productsList);
         setLoading(false);
@@ -58,7 +65,6 @@ function Products() {
     fetchProducts();
   }, []);
 
-
   const handleAddToCart = (product) => {
     if (!user) {
       alert("⚠️ Please login first!");
@@ -67,44 +73,121 @@ function Products() {
     addToCart({ ...product, user_id: user.uid || user.id });
   };
 
-  if (loading) return <p>Loading products...</p>;
-  if (!products.length) return <p>No products available</p>;
+  // Get unique categories
+  const categories = [
+    "All",
+    ...new Set(products.map((p) => p.category).filter(Boolean)),
+  ];
 
-  const categories = [...new Set(products.map((p) => p.category).filter(Boolean))];
+  // Filter products based on search and category
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = 
+      (product.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (product.title?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (product.description?.toLowerCase() || "").includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "All" || product.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  // Group products by category for display
+  const categorizedProducts = {};
+  if (selectedCategory === "All") {
+    categories.slice(1).forEach((cat) => {
+      categorizedProducts[cat] = filteredProducts.filter(
+        (p) => p.category === cat
+      );
+    });
+  } else {
+    categorizedProducts[selectedCategory] = filteredProducts;
+  }
+
+  if (loading) {
+    return (
+      <div className="products-page">
+        <p>Loading products...</p>
+      </div>
+    );
+  }
+
+  if (!products.length) {
+    return (
+      <div className="products-page">
+        <p>No products available</p>
+      </div>
+    );
+  }
 
   return (
     <div className="products-page">
-     
+      {/* Toast Notification */}
       {toast && <div className="toast">{toast}</div>}
 
-      {categories.length > 0
-        ? categories.map((cat) => (
-            <div key={cat} className="product-section">
-              <h2>{cat}</h2>
-              <div className="products-grid">
-                {products
-                  .filter((p) => p.category === cat)
-                  .map((p) => (
+      {/* Search and Filter Section */}
+      <div className="filters-section">
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="🔍 Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="category-filters">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              className={`category-btn ${
+                selectedCategory === cat ? "active" : ""
+              }`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Products Display */}
+      {filteredProducts.length === 0 ? (
+        <p>No products match your search criteria.</p>
+      ) : selectedCategory === "All" ? (
+        // Display by categories
+        Object.entries(categorizedProducts).map(
+          ([category, categoryProducts]) =>
+            categoryProducts.length > 0 && (
+              <div key={category} className="product-section">
+                <h2>{category}</h2>
+                <div className="products-grid">
+                  {categoryProducts.map((p) => (
                     <ProductCard
                       key={p.id}
                       product={p}
                       handleAddToCart={handleAddToCart}
                     />
                   ))}
+                </div>
               </div>
-            </div>
-          ))
-        : (
-            <div className="products-grid">
-              {products.map((p) => (
-                <ProductCard
-                  key={p.id}
-                  product={p}
-                  handleAddToCart={handleAddToCart}
-                />
-              ))}
-            </div>
-          )}
+            )
+        )
+      ) : (
+        // Display filtered products
+        <div className="product-section">
+          <h2>{selectedCategory}</h2>
+          <div className="products-grid">
+            {filteredProducts.map((p) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                handleAddToCart={handleAddToCart}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
