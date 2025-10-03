@@ -15,6 +15,7 @@
 
 .nav-links {
   display: flex;
+  align-items: center; /* ✅ keeps items vertically aligned */
   gap: 1.5rem;
   list-style: none;
 }
@@ -30,26 +31,31 @@
 }
 
 .cart-btn {
+  position: relative; /* ✅ allows badge positioning */
   background: none;
   border: none;
   color: white;
   font-size: 1rem;
   cursor: pointer;
-  position: relative;
+  display: flex;
+  align-items: center; /* keeps text & badge aligned */
 }
 
-.cart-btn::after {
-  content: attr(data-count);
+.cart-badge {
   position: absolute;
-  top: -8px;
-  right: -15px;
+  top: -6px;   /* adjust vertical placement */
+  right: -12px; /* adjust horizontal placement */
   background: red;
   color: white;
   font-size: 0.7rem;
   font-weight: bold;
   padding: 2px 6px;
   border-radius: 50%;
-  display: inline-block;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-buttons {
