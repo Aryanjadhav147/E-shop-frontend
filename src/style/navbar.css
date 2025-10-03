@@ -29,7 +29,7 @@
   color: #f8d57e;
 }
 
-
+/* Cart Button */
 .cart-btn {
   background: none;
   border: none;
@@ -37,30 +37,37 @@
   font-size: 1rem;
   cursor: pointer;
   position: relative;
+  padding: 0.3rem 0.6rem;
 }
 
-.cart-btn::after {
-  content: attr(data-count);
+/* Cart Badge */
+.cart-badge {
   position: absolute;
   top: -8px;
-  right: -15px;
+  right: -10px;
   background: red;
   color: white;
   font-size: 0.7rem;
   font-weight: bold;
   padding: 2px 6px;
   border-radius: 50%;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
 }
 
-
+/* Auth Buttons */
 .auth-buttons {
   display: flex;
   gap: 1rem;
 }
-.auth-buttons a:hover{
+
+.auth-buttons a:hover {
   color: #f8d57e;
 }
+
 .logout-btn {
   background: #ff4d4d;
   border: none;
