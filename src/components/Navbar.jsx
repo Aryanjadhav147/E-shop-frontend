@@ -21,16 +21,20 @@ function Navbar({ openCart }) {
         <li><Link to="/">Home</Link></li>
         <li><Link to="/products">Products</Link></li>
 
+        {/* Cart Button with Badge */}
         {user && (
           <li>
-            <button className="cart-btn" onClick={openCart} data-count={totalItems}>
-               Cart
+            <button className="cart-btn" onClick={openCart}>
+              Cart
+              {totalItems > 0 && (
+                <span className="cart-badge">{totalItems}</span>
+              )}
             </button>
           </li>
         )}
-<li><Link to="/profile">profile</Link></li>
-        {user && <li><Link to="/orders">Orders</Link></li>}
 
+        {user && <li><Link to="/orders">Orders</Link></li>}
+        {user && <li><Link to="/profile">Profile</Link></li>}
       </ul>
 
       {/* Auth Buttons */}
