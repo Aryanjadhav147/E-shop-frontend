@@ -2,7 +2,7 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; /* vertically centers all children */
   padding: 1rem 2rem;
   background-color: #1e1e1e;
   color: white;
@@ -20,12 +20,22 @@
   display: flex;
   gap: 1.5rem;
   list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center; /* vertically center links */
+}
+
+.nav-links li {
+  display: flex;
+  align-items: center; /* centers text and button inside li */
 }
 
 .nav-links a {
   color: white;
   text-decoration: none;
   transition: color 0.3s;
+  display: flex;
+  align-items: center; /* centers text vertically */
 }
 
 .nav-links a:hover {
@@ -41,12 +51,14 @@
   cursor: pointer;
   position: relative;
   padding: 0.3rem 0.6rem;
+  display: flex;
+  align-items: center; /* centers "Cart" text with badge */
 }
 
 /* Cart Badge */
 .cart-badge {
   position: absolute;
-  top: -8px;
+  top: -6px;
   right: -10px;
   background: red;
   color: white;
@@ -65,6 +77,7 @@
 .auth-buttons {
   display: flex;
   gap: 1rem;
+  align-items: center; /* vertically center buttons */
 }
 
 .auth-buttons a:hover {
