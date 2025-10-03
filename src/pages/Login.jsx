@@ -1,10 +1,8 @@
-
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { firebaseLogin } from "../firebase/auth.js"; 
 import { db } from "../firebaseConfig"; 
-
 import { collection, query, where, getDocs } from "firebase/firestore";
 import "../style/login.css";
 
@@ -18,7 +16,6 @@ function Login() {
     e.preventDefault();
 
     try {
-     
       const result = await firebaseLogin(email, password);
       if (!result.success) {
         alert("❌ Login failed: " + result.error);
@@ -30,13 +27,12 @@ function Login() {
       const userSnap = await getDocs(q);
 
       if (userSnap.empty) {
-        alert("User not found in Firestore");
+        alert("❌ User not found in Firestore");
         return;
       }
 
       const userDoc = userSnap.docs[0];
       const userData = userDoc.data();
-
 
       login({
         id: userDoc.id,         
@@ -45,8 +41,8 @@ function Login() {
         isAdmin: userData.isAdmin || false,
       });
 
-      alert(" Logged in successfully!");
-      navigate("/"); // redirect
+      alert("✅ Logged in successfully!");
+      navigate("/");
     } catch (err) {
       console.error(err);
       alert("Something went wrong: " + err.message);

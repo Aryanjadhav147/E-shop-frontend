@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { firebaseSignup } from "../firebase/auth.js";
+import { firebaseSignup } from "../firebase/auth.js";  // ✅ correct import
 
 import "../style/login.css";
 
@@ -21,12 +20,13 @@ function Signup() {
     }
 
     try {
-      const result = await signup(email, password, username);
+      // ✅ call the correct function
+      const result = await firebaseSignup(email, password, username);
       if (result.success) {
         alert("🎉 Account created successfully!");
-        navigate("/login"); 
+        navigate("/login");
       } else {
-        alert(" Signup failed: " + result.error);
+        alert("❌ Signup failed: " + result.error);
       }
     } catch (err) {
       console.error(err);
