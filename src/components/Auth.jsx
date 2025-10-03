@@ -20,7 +20,7 @@ function Auth() {
       const data = await res.json();
 
       if (data.success) {
-        login(data.user); // Save user in AuthContext
+        login(data.user); 
         alert(isLogin ? "Logged in!" : "Signed up!");
       } else {
         alert(data.error);

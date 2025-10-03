@@ -19,7 +19,6 @@ function ProductDetails() {
       try {
         if (!id) return;
 
-        // Firestore doc reference
         const docRef = doc(db, "products", id);
         const docSnap = await getDoc(docRef);
 
@@ -41,12 +40,12 @@ function ProductDetails() {
 
   const handleAddToCart = () => {
     if (!user) {
-      alert("⚠️ Please login first!");
+      alert(" Please login first!");
       return;
     }
     if (!product) return;
     addToCart({ ...product, user_id: user.id });
-    alert(`✅ ${product.name} added to cart!`);
+    alert(` ${product.name} added to cart!`);
   };
 
   if (loading) return <p>Loading product...</p>;

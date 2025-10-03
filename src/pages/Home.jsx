@@ -13,7 +13,7 @@ function Home() {
   const { user } = useContext(AuthContext);
   const [featuredProducts, setFeaturedProducts] = useState([]);
 
-  // Fetch featured products from Firestore
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -22,12 +22,12 @@ function Home() {
           id: doc.id,
           ...doc.data(),
           quantity: 1,
-          // Ensure image path starts with "/" for public folder or Firebase
+        
           image: doc.data().image?.startsWith("/")
             ? doc.data().image
             : `/${doc.data().image}`,
         }));
-        setFeaturedProducts(products.slice(0, 6)); // first 6 as featured
+        setFeaturedProducts(products.slice(0, 6)); 
       } catch (err) {
         console.error("Error fetching products:", err);
       }
@@ -36,22 +36,22 @@ function Home() {
     fetchProducts();
   }, []);
 
-  // Handle Add to Cart
+
   const handleAddToCart = (product) => {
     if (!user) {
-      alert("⚠️ Please login first!");
+      alert(" Please login first!");
       return;
     }
     addToCart({ ...product, user_id: user.uid || user.id });
-    alert(`✅ ${product.name} added to cart!`);
+    alert(` ${product.name} added to cart!`);
   };
 
   return (
     <div className="home">
-      {/* Toast Notification */}
+   
       {toast && <div className="toast">{toast}</div>}
 
-      {/* Hero Carousel */}
+  
       <section className="hero">
         <div
           id="heroCarousel"
@@ -104,7 +104,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Featured Products */}
+    
       <section className="featured">
         <h2>Featured Products</h2>
         <div className="products-grid">
@@ -119,7 +119,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-column">
@@ -146,9 +146,9 @@ function Home() {
           </div>
           <div className="footer-column">
             <h3>Reach Us</h3>
-            <p>📍 123, Main Street, Thane, India - 400601</p>
-            <p>📞 +91 8928371059</p>
-            <p>✉️ jadhavaryu24@gmail.com</p>
+            <p>123, Main Street, Thane, India - 400601</p>
+            <p>+91 8928371059</p>
+            <p> jadhavaryu24@gmail.com</p>
           </div>
         </div>
         <div className="footer-bottom">© 2025 - E-shop. All rights reserved.</div>

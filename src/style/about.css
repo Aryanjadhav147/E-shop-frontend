@@ -12,7 +12,7 @@
   font-size: 2rem;
   color: #1e272e;
   margin-bottom: 20px;
-  border-bottom: 2px solid #27ae60; /* green accent for contact */
+  border-bottom: 2px solid #27ae60; 
   display: inline-block;
   padding-bottom: 5px;
 }
@@ -36,17 +36,16 @@
   position: relative;
 }
 
-/* ✅ Add icons using pseudo-elements */
 .page-container li::before {
-  content: "📩"; /* default icon */
+  content: "📩"; 
   position: absolute;
   left: 0;
 }
 
 .page-container li:nth-child(2)::before {
-  content: "📞"; /* phone */
+  content: "📞"; 
 }
 
 .page-container li:nth-child(3)::before {
-  content: "📍"; /* location */
+  content: "📍"; 
 }

@@ -1,4 +1,4 @@
-/* Container */
+
 .product-details-container {
   padding: 30px;
   display: flex;
@@ -8,7 +8,7 @@
   background: #f8f9fa;
 }
 
-/* Back button */
+
 .back-btn {
   position: absolute;
   top: 20px;
@@ -39,7 +39,7 @@
   animation: fadeIn 0.4s ease-in-out;
 }
 
-/* Image */
+
 .product-details-card img {
   width: 300px;
   height: 300px;
@@ -48,7 +48,6 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Info */
 .product-info {
   flex: 1;
   display: flex;
@@ -82,7 +81,7 @@
   line-height: 1.5;
 }
 
-/* Add to Cart Button */
+
 .add-to-cart-btn {
   background: #28a745;
   color: white;
@@ -97,7 +96,7 @@
   background: #218838;
 }
 
-/* Animation */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -109,7 +108,7 @@
   }
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .product-details-card {
     flex-direction: column;

@@ -10,7 +10,7 @@
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #f8d57e; /* Soft yellow highlight */
+  color: #f8d57e; 
 }
 
 .nav-links {
@@ -29,7 +29,7 @@
   color: #f8d57e;
 }
 
-/* Cart Button with Badge */
+
 .cart-btn {
   background: none;
   border: none;
@@ -53,7 +53,7 @@
   display: inline-block;
 }
 
-/* Auth Buttons */
+
 .auth-buttons {
   display: flex;
   gap: 1rem;

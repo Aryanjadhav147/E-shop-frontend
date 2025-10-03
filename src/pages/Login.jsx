@@ -1,12 +1,15 @@
-// src/pages/Login.jsx
+
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { login as firebaseLogin } from "../firebase/auth.js"; // login from firebase
-import { AuthContext } from "../context/AuthContext"; // ✅ import AuthContext
+import { AuthContext } from "../context/AuthContext";
+import { firebaseLogin } from "../firebase/auth.js"; 
+import { db } from "../firebaseConfig"; 
+
+import { collection, query, where, getDocs } from "firebase/firestore";
 import "../style/login.css";
 
 function Login() {
-  const { login } = useContext(AuthContext); // ✅ get login function from context
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -15,17 +18,38 @@ function Login() {
     e.preventDefault();
 
     try {
-      const result = await firebaseLogin(email, password); // call Firebase login
-      if (result.success) {
-        login(result.user); // ✅ update AuthContext
-        alert("✅ Logged in successfully!");
-        navigate("/"); // redirect to home
-      } else {
+     
+      const result = await firebaseLogin(email, password);
+      if (!result.success) {
         alert("❌ Login failed: " + result.error);
+        return;
       }
+
+      const usersCol = collection(db, "users");
+      const q = query(usersCol, where("email", "==", email));
+      const userSnap = await getDocs(q);
+
+      if (userSnap.empty) {
+        alert("User not found in Firestore");
+        return;
+      }
+
+      const userDoc = userSnap.docs[0];
+      const userData = userDoc.data();
+
+
+      login({
+        id: userDoc.id,         
+        email: result.user.email,
+        username: userData.username,
+        isAdmin: userData.isAdmin || false,
+      });
+
+      alert(" Logged in successfully!");
+      navigate("/"); // redirect
     } catch (err) {
       console.error(err);
-      alert("⚠️ Something went wrong: " + err.message);
+      alert("Something went wrong: " + err.message);
     }
   };
 

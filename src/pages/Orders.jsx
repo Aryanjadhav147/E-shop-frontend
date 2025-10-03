@@ -14,7 +14,7 @@ function Orders() {
 
     const fetchOrders = async () => {
       try {
-        // Query orders for the logged-in user
+       
         const q = query(collection(db, "orders"), where("user_id", "==", user.uid));
         const snapshot = await getDocs(q);
         const ordersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

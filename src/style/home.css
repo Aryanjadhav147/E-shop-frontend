@@ -4,14 +4,14 @@
   background-color: #f5f5f5;
 }
 
-/* ================= Hero Carousel ================= */
+
 .hero {
   position: relative;
   margin-bottom: 50px;
 }
 
 .carousel-item img {
-  height: 500px; /* Adjust slider height */
+  height: 500px; 
   object-fit: cover;
   border-radius: 15px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
@@ -54,7 +54,7 @@
   box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
 }
 
-/* Carousel controls */
+
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   background-color: rgba(0,0,0,0.5);
@@ -63,7 +63,6 @@
   height: 40px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .carousel-caption {
     max-width: 90%;
@@ -80,7 +79,7 @@
   }
 }
 
-/* ================= Featured Products ================= */
+
 .featured {
   text-align: center;
   padding: 60px 20px;
@@ -146,7 +145,7 @@
   transform: scale(1.05);
 }
 
-/* ================= Footer ================= */
+
 .footer {
   background-color: #101111;
   color: white;

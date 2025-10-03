@@ -2,14 +2,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
-  background: url("/public//images//omid-armin-VYt7lu6KUWE-unsplash.jpg") no-repeat center center; /* Path to your image */
-  background-size: cover; /* Make image cover whole area */
+  height: 100vh; 
+  background: url("/public//images//omid-armin-VYt7lu6KUWE-unsplash.jpg") no-repeat center center;
+  background-size: cover; 
   font-family: 'Poppins', sans-serif;
 }
 
 .auth-page form {
-  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent form background */
+  background-color: rgba(255, 255, 255, 0.9); 
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);

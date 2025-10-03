@@ -1,7 +1,8 @@
-// src/pages/Signup.jsx
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { signup } from "../firebase/auth.js"; // ✅ import signup from auth.js
+import { firebaseSignup } from "../firebase/auth.js";
+
 import "../style/login.css";
 
 function Signup() {
@@ -23,13 +24,13 @@ function Signup() {
       const result = await signup(email, password, username);
       if (result.success) {
         alert("🎉 Account created successfully!");
-        navigate("/login"); // redirect to login page
+        navigate("/login"); 
       } else {
-        alert("❌ Signup failed: " + result.error);
+        alert(" Signup failed: " + result.error);
       }
     } catch (err) {
       console.error(err);
-      alert("⚠️ Something went wrong: " + err.message);
+      alert("Something went wrong: " + err.message);
     }
   };
 

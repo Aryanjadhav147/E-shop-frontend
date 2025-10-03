@@ -35,7 +35,7 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch products from Firestore
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -43,7 +43,7 @@ function Products() {
         const snapshot = await getDocs(productsCollection);
         const productsList = snapshot.docs.map((doc) => ({
   ...doc.data(),
-  id: doc.id,  // put it last
+  id: doc.id,  
   quantity: 1,
 }));
 
@@ -58,7 +58,7 @@ function Products() {
     fetchProducts();
   }, []);
 
-  // Handle add to cart
+
   const handleAddToCart = (product) => {
     if (!user) {
       alert("⚠️ Please login first!");
@@ -74,7 +74,7 @@ function Products() {
 
   return (
     <div className="products-page">
-      {/* Toast Notification from CartContext */}
+     
       {toast && <div className="toast">{toast}</div>}
 
       {categories.length > 0

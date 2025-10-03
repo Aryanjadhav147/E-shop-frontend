@@ -20,8 +20,8 @@ function Cart({ onClose }) {
       alert("⚠️ Cart is empty!");
       return;
     }
-    navigate("/checkout"); // Navigate to the Checkout page
-    onClose(); // close cart sidebar if needed
+    navigate("/checkout"); 
+    onClose();
   };
 
   return (

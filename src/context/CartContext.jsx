@@ -8,7 +8,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [toast, setToast] = useState("");
 
-  // Load cart from localStorage if logged in
+  
   useEffect(() => {
     if (user) {
       const storedCart = localStorage.getItem(`cart_${user.uid || user.id}`);
@@ -18,7 +18,7 @@ export const CartProvider = ({ children }) => {
     }
   }, [user]);
 
-  // Save cart to localStorage
+ 
   useEffect(() => {
     if (user) localStorage.setItem(`cart_${user.uid || user.id}`, JSON.stringify(cart));
   }, [cart, user]);

@@ -9,11 +9,12 @@ import Signup from "./pages/Signup";
 import Orders from "./pages/Orders";
 import Cart from "./pages/Cart";
 import ProductDetails from "./pages/ProductDetails";
-import Checkout from "./pages/Checkout";   // ✅ Import Checkout
+import Checkout from "./pages/Checkout"; 
 import About from "./pages/About";
 import Blogs from "./pages/Blogs";
 import Contact from "./pages/Contact";
 import UserProfile from "./pages/UserProfile";
+import AdminDashboard from "./pages/AdminDashboard";
 
 
 function App() {
@@ -33,7 +34,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/orders" element={<Orders />} />
-        <Route path="/checkout" element={<Checkout />} /> {/* ✅ Added Checkout */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/checkout" element={<Checkout />} /> 
         <Route path="/about" element={<About />} />
 <Route path="/blogs" element={<Blogs />} />
 <Route path="/contact" element={<Contact />} />

@@ -1,4 +1,4 @@
-/* ===================== Checkout Container ===================== */
+
 .checkout-container {
   max-width: 800px;
   margin: 40px auto;
@@ -17,7 +17,7 @@
   color: #222;
 }
 
-/* ===================== Checkout Summary ===================== */
+
 .checkout-summary {
   background: #f9f9f9;
   padding: 18px;
@@ -37,7 +37,6 @@
   font-weight: bold;
 }
 
-/* ===================== Checkout Form ===================== */
 .checkout-form h3 {
   margin: 25px 0 12px;
   color: #333;
@@ -70,7 +69,7 @@ textarea {
   font-size: 1rem;
 }
 
-/* ===================== Payment Options ===================== */
+
 .payment-options {
   display: flex;
   gap: 15px;
@@ -96,7 +95,7 @@ textarea {
   color: #fff;
 }
 
-/* ===================== Place Order Button ===================== */
+
 .place-order {
   width: 100%;
   padding: 15px;
@@ -114,7 +113,7 @@ textarea {
   background: #218838;
 }
 
-/* ===================== Online Payment Section ===================== */
+
 .online-payment-section {
   position: relative;
   margin-bottom: 20px;
@@ -135,7 +134,7 @@ textarea {
   font-size: 1rem;
   color: #333;
   background-color: #fff;
-  appearance: none; /* Remove default arrow */
+  appearance: none; 
   cursor: pointer;
   transition: 0.3s;
   margin-bottom: 15px;
@@ -147,7 +146,7 @@ textarea {
   box-shadow: 0 0 5px rgba(0,123,255,0.3);
 }
 
-/* Custom arrow icon for select */
+
 .online-payment-section::after {
   content: "▼";
   position: absolute;
@@ -159,7 +158,7 @@ textarea {
   font-size: 0.8rem;
 }
 
-/* Online payment details input */
+
 .online-payment-section input[name="paymentDetails"] {
   width: 100%;
   padding: 12px 15px;
@@ -178,7 +177,7 @@ textarea {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
-/* ===================== Responsive ===================== */
+
 @media (max-width: 600px) {
   .checkout-container {
     padding: 15px;

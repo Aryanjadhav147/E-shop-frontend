@@ -66,12 +66,12 @@ function Checkout() {
     try {
       const ordersCollection = collection(db, "orders");
       await addDoc(ordersCollection, orderData);
-      alert("✅ Order placed successfully!");
+      alert(" Order placed successfully!");
       clearCart();
       navigate("/orders");
     } catch (err) {
       console.error("Error placing order:", err);
-      alert("❌ Error placing order. Please try again later.");
+      alert(" Error placing order. Please try again later.");
     }
   };
 

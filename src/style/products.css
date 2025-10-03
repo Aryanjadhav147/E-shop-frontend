@@ -66,17 +66,17 @@
   animation: fadeOut 2s forwards;
 }
 
-/* Success */
+
 .toast-success {
   background-color: #28a745; /* Green */
 }
 
-/* Warning */
+
 .toast-warning {
   background-color: #f39c12; /* Orange */
 }
 
-/* Animation */
+
 @keyframes fadeOut {
   0% { opacity: 1; transform: translateY(0); }
   80% { opacity: 1; transform: translateY(0); }
@@ -84,14 +84,14 @@
 }
 
 
-/* Remove underline from product links */
+
 a {
   text-decoration: none;
-  color: inherit; /* Keep text color same as parent */
+  color: inherit; 
 }
 
 .product-card a {
   text-decoration: none;
   color: inherit;
-  display: block; /* Makes whole card clickable */
+  display: block;
 }

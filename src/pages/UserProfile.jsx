@@ -1,4 +1,4 @@
-// src/pages/UserProfile.jsx
+
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
