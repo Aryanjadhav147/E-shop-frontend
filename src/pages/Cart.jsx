@@ -1,15 +1,36 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import db from "../firebaseConfig";
 import "../style/cart.css";
 
 function Cart({ onClose }) {
   const { cart, updateQuantity, removeFromCart, clearCart, toast } = useContext(CartContext);
   const { user } = useContext(AuthContext);
+  const [ordersCount, setOrdersCount] = useState(0); // store past order count
   const navigate = useNavigate();
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Fetch user's past orders to display count if cart is empty
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchOrdersCount = async () => {
+      try {
+        const ordersRef = collection(db, "orders");
+        const q = query(ordersRef, where("user_id", "==", user.id)); // use user.id stored in context
+        const snapshot = await getDocs(q);
+        setOrdersCount(snapshot.size); // number of orders placed
+      } catch (err) {
+        console.error("Error fetching orders count:", err);
+      }
+    };
+
+    fetchOrdersCount();
+  }, [user]);
 
   const handleProceedToCheckout = () => {
     if (!user) {
@@ -24,10 +45,15 @@ function Cart({ onClose }) {
     onClose();
   };
 
+  // Display count logic
+  const displayCount = cart.length > 0 ? cart.length : ordersCount > 0 ? 1 : 0;
+
   return (
     <div className="cart-container">
       <button className="close-cart-btn" onClick={onClose}>×</button>
       <h2>Shopping Cart</h2>
+
+      <p>Total items: {displayCount}</p> {/* ✅ Show cart + past orders */}
 
       {toast && <div className="toast">{toast}</div>}
 
