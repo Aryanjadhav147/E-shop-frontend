@@ -47,7 +47,7 @@ function Home() {
             ? doc.data().image
             : `/${doc.data().image}`,
         }));
-        setFeaturedProducts(products.slice(0, 6));
+        setFeaturedProducts(products.slice(0, 8));
       } catch (err) {
         console.error("Error fetching products:", err);
       }
