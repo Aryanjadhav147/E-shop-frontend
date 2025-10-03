@@ -1,3 +1,4 @@
+/* Navbar Container */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -7,12 +8,14 @@
   color: white;
 }
 
+/* Logo */
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #f8d57e; 
+  color: #f8d57e;
 }
 
+/* Navigation Links */
 .nav-links {
   display: flex;
   gap: 1.5rem;
@@ -68,6 +71,7 @@
   color: #f8d57e;
 }
 
+/* Logout Button */
 .logout-btn {
   background: #ff4d4d;
   border: none;
