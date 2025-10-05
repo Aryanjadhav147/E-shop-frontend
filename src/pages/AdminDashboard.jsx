@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "../style/admin.css";
@@ -8,14 +7,16 @@ function AdminDashboard() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Use environment variable for backend URL
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3200";
+
   useEffect(() => {
     const fetchOrders = async () => {
       if (!user || !user.isAdmin) return;
 
       try {
-     
         const res = await fetch(
-          `http://localhost:3200/api/admin/orders?userId=${encodeURIComponent(user.id)}`,
+          `${BASE_URL}/api/admin/orders?userId=${encodeURIComponent(user.id)}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -37,7 +38,7 @@ function AdminDashboard() {
     };
 
     fetchOrders();
-  }, [user]);
+  }, [user, BASE_URL]);
 
   if (!user) return <p>⚠️ Please login to view this page.</p>;
   if (!user.isAdmin) return <p>⚠️ You must be logged in as admin to view this page.</p>;
