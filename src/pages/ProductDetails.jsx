@@ -62,6 +62,21 @@ function ProductDetails() {
     alert(`✅ ${product.name} (${quantity}) added to cart!`);
   };
 
+  const handleBuyNow = () => {
+    if (!user) {
+      alert("⚠️ Please login first!");
+      return;
+    }
+    if (!product) return;
+
+    addToCart({ 
+      ...product, 
+      quantity: quantity,
+      user_id: user.uid || user.id 
+    });
+    navigate('/checkout');
+  };
+
   const incrementQuantity = () => {
     setQuantity((prev) => prev + 1);
   };
@@ -86,7 +101,7 @@ function ProductDetails() {
         <button className="back-btn" onClick={() => navigate(-1)}>
           ← Back
         </button>
-        <p>❌ Product not found.</p>
+        <p>❌ Product not found.</p> 
       </div>
     );
   }
@@ -110,7 +125,7 @@ function ProductDetails() {
           <h2>{product.name}</h2>
 
           {product.category && (
-            <p className="category">📂 {product.category}</p>
+            <p className="category"> {product.category}</p>
           )}
 
           <p className="price">₹{product.price?.toFixed(2) || "0.00"}</p>
@@ -129,9 +144,21 @@ function ProductDetails() {
             </div>
           </div>
 
-          <button className="add-to-cart-btn" onClick={handleAddToCart}>
-            Add to Cart
-          </button>
+          {/* Action Buttons */}
+          <div className="action-buttons">
+            <button className="add-to-cart-btn" onClick={handleAddToCart}>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Add to Cart
+            </button>
+            <button className="buy-now-btn" onClick={handleBuyNow}>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Buy Now
+            </button>
+          </div>
         </div>
       </div>
     </div>

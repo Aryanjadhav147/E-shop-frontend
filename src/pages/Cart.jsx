@@ -55,7 +55,7 @@ function Cart({ onClose }) {
       </button>
       
       <h2>Shopping Cart</h2>
-      <p>Total items: {displayCount}</p>
+      <p>Total items: {displayCount > 0}</p>
 
       {toast && <div className="toast">{toast}</div>}
 
