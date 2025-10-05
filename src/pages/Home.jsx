@@ -239,21 +239,21 @@ function Home() {
           </div>
           <div className="footer-column">
             <h3>Quick Links</h3>
-            <ul>
-              <li><a href="/">Home</a></li>
-              <li><a href="/about">About Us</a></li>
-              <li><a href="/contact">Contact Us</a></li>
-              <li><a href="/blogs">Blogs</a></li>
-            </ul>
+<ul>
+  <li><Link to="/">Home</Link></li>
+  <li><Link to="/about">About Us</Link></li>
+  <li><Link to="/contact">Contact Us</Link></li>
+  <li><Link to="/blogs">Blogs</Link></li>
+</ul>
           </div>
           <div className="footer-column">
             <h3>Shop Now</h3>
-            <ul>
-              <li><a href="/products">Collections</a></li>
-              <li><a href="/products">Trending Products</a></li>
-              <li><a href="/products">New Arrivals</a></li>
-              <li><a href="/products">Featured Products</a></li>
-            </ul>
+         <ul>
+  <li><Link to="/products">Collections</Link></li>
+  <li><Link to="/products">Trending Products</Link></li>
+  <li><Link to="/products">New Arrivals</Link></li>
+  <li><Link to="/products">Featured Products</Link></li>
+</ul>
           </div>
           <div className="footer-column">
             <h3>Reach Us</h3>
