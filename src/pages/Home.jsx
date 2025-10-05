@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import "../style/home.css";
@@ -9,6 +9,7 @@ import db from "../firebaseConfig";
 function Home() {
   const { addToCart, toast } = useContext(CartContext);
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -40,8 +41,8 @@ function Home() {
       try {
         const querySnapshot = await getDocs(collection(db, "products"));
         const products = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
           ...doc.data(),
+          id: doc.id,  // Put id after spreading doc.data() to ensure it's not overwritten
           quantity: 1,
           image: doc.data().image?.startsWith("/")
             ? doc.data().image
@@ -71,6 +72,15 @@ function Home() {
     }
     addToCart({ ...product, user_id: user.uid || user.id });
     alert(`${product.name} added to cart!`);
+  };
+
+  const handleBuyNow = (product) => {
+    if (!user) {
+      alert("Please login first!");
+      return;
+    }
+    addToCart({ ...product, user_id: user.uid || user.id });
+    navigate('/checkout');
   };
 
   const nextSlide = () => {
@@ -204,11 +214,15 @@ function Home() {
         <div className="products-grid">
           {featuredProducts.map((product) => (
             <div key={product.id} className="product-card">
-              <div className="product-image">
+              {/* Make the image clickable */}
+              <Link to={`/products/${product.id}`} className="product-image">
                 <img src={product.image} alt={product.name} />
-              </div>
+              </Link>
               <div className="product-content">
-                <h3>{product.name}</h3>
+                {/* Also make the product name clickable */}
+                <Link to={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <h3>{product.name}</h3>
+                </Link>
                 <div className="product-meta">
                   <p className="product-price">₹{product.price}</p>
                   <div className="product-rating">
@@ -218,12 +232,20 @@ function Home() {
                     <span>4.5</span>
                   </div>
                 </div>
-                <button onClick={() => handleAddToCart(product)}>
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  Add to Cart
-                </button>
+                <div className="product-buttons">
+                  <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Add to Cart
+                  </button>
+                  <button className="buy-now-btn" onClick={() => handleBuyNow(product)}>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Buy Now
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -239,21 +261,21 @@ function Home() {
           </div>
           <div className="footer-column">
             <h3>Quick Links</h3>
-<ul>
-  <li><Link to="/">Home</Link></li>
-  <li><Link to="/about">About Us</Link></li>
-  <li><Link to="/contact">Contact Us</Link></li>
-  <li><Link to="/blogs">Blogs</Link></li>
-</ul>
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/contact">Contact Us</Link></li>
+              <li><Link to="/blogs">Blogs</Link></li>
+            </ul>
           </div>
           <div className="footer-column">
             <h3>Shop Now</h3>
-         <ul>
-  <li><Link to="/products">Collections</Link></li>
-  <li><Link to="/products">Trending Products</Link></li>
-  <li><Link to="/products">New Arrivals</Link></li>
-  <li><Link to="/products">Featured Products</Link></li>
-</ul>
+            <ul>
+              <li><Link to="/products">Collections</Link></li>
+              <li><Link to="/products">Trending Products</Link></li>
+              <li><Link to="/products">New Arrivals</Link></li>
+              <li><Link to="/products">Featured Products</Link></li>
+            </ul>
           </div>
           <div className="footer-column">
             <h3>Reach Us</h3>

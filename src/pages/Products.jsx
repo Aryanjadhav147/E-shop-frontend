@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import "../style/products.css";
@@ -7,7 +7,7 @@ import { collection, getDocs } from "firebase/firestore";
 import db from "../firebaseConfig";
 
 // Product Card Component
-function ProductCard({ product, handleAddToCart }) {
+function ProductCard({ product, handleAddToCart, handleBuyNow }) {
   // Prepend leading slash to match public folder path
   const imageUrl = product.image?.startsWith("/")
     ? product.image
@@ -27,9 +27,14 @@ function ProductCard({ product, handleAddToCart }) {
       </Link>
       {product.category && <p className="category">{product.category}</p>}
       <p className="price">₹{product.price?.toFixed(2) || "0.00"}</p>
-      <button onClick={() => handleAddToCart(product)}>
-        Add to Cart
-      </button>
+      <div className="product-buttons">
+        <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
+          Add to Cart
+        </button>
+        <button className="buy-now-btn" onClick={() => handleBuyNow(product)}>
+          Buy Now
+        </button>
+      </div>
     </div>
   );
 }
@@ -37,6 +42,7 @@ function ProductCard({ product, handleAddToCart }) {
 function Products() {
   const { addToCart, toast } = useContext(CartContext);
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,6 +77,15 @@ function Products() {
       return;
     }
     addToCart({ ...product, user_id: user.uid || user.id });
+  };
+
+  const handleBuyNow = (product) => {
+    if (!user) {
+      alert("⚠️ Please login first!");
+      return;
+    }
+    addToCart({ ...product, user_id: user.uid || user.id });
+    navigate('/checkout');
   };
 
   // Get unique categories
@@ -167,6 +182,7 @@ function Products() {
                       key={p.id}
                       product={p}
                       handleAddToCart={handleAddToCart}
+                      handleBuyNow={handleBuyNow}
                     />
                   ))}
                 </div>
@@ -183,6 +199,7 @@ function Products() {
                 key={p.id}
                 product={p}
                 handleAddToCart={handleAddToCart}
+                handleBuyNow={handleBuyNow}
               />
             ))}
           </div>
