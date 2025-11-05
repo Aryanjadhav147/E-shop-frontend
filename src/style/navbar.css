@@ -5,6 +5,7 @@
   padding: 1rem 2rem;
   background-color: #1e1e1e;
   color: white;
+  flex-wrap: wrap; /* ✅ allows wrapping neatly on smaller screens */
 }
 
 .logo {
@@ -15,9 +16,10 @@
 
 .nav-links {
   display: flex;
-  align-items: center; /* ✅ keeps items vertically aligned */
+  align-items: center; /* keeps items vertically aligned */
   gap: 1.5rem;
   list-style: none;
+  flex-wrap: wrap; /* ✅ keeps nav links from overflowing */
 }
 
 .nav-links a {
@@ -31,20 +33,20 @@
 }
 
 .cart-btn {
-  position: relative; /* ✅ allows badge positioning */
+  position: relative;
   background: none;
   border: none;
   color: white;
   font-size: 1rem;
   cursor: pointer;
   display: flex;
-  align-items: center; /* keeps text & badge aligned */
+  align-items: center;
 }
 
 .cart-badge {
   position: absolute;
-  top: -6px;   /* adjust vertical placement */
-  right: -12px; /* adjust horizontal placement */
+  top: -6px;
+  right: -12px;
   background: red;
   color: white;
   font-size: 0.7rem;
@@ -80,8 +82,30 @@
 .logout-btn:hover {
   background: #e63939;
 }
+
+/* ✅ Mobile responsive adjustments */
 @media (max-width: 768px) {
+  .navbar {
+    flex-direction: column; /* stack items neatly */
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .auth-buttons {
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
   .logout-btn {
-    display: none;
+    display: block; /* keep visible */
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
   }
 }
