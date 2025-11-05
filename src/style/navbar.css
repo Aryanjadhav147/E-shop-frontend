@@ -80,3 +80,8 @@
 .logout-btn:hover {
   background: #e63939;
 }
+@media (max-width: 768px) {
+  .logout-btn {
+    display: none;
+  }
+}
