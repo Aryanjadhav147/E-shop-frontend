@@ -28,9 +28,8 @@ function Checkout() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Auto-detect backend (for local or hosted)
-  const backendURL =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  // ✅ Use same origin (frontend + backend hosted together)
+  const backendURL = ""; // automatically uses your current domain
 
   // Load Razorpay script
   const loadRazorpayScript = () => {
@@ -55,7 +54,8 @@ function Checkout() {
       setLoading(true);
       console.log("🚀 Creating order for amount:", total);
 
-      const response = await fetch(`${backendURL}/api/payment/create-order`, {
+      // ✅ No localhost, just relative path
+      const response = await fetch(`/api/payment/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: total }),
@@ -69,7 +69,7 @@ function Checkout() {
       }
 
       const options = {
-        key: "rzp_test_RdfpsDLziP2e5n", // Razorpay key
+        key: "rzp_test_RdfpsDLziP2e5n", // Razorpay test key
         amount: data.amount,
         currency: data.currency,
         name: "E-Shop",
@@ -79,7 +79,8 @@ function Checkout() {
           console.log("💳 Payment success:", response);
 
           try {
-            const verifyRes = await fetch(`${backendURL}/api/payment/verify-payment`, {
+            // ✅ Relative path again
+            const verifyRes = await fetch(`/api/payment/verify-payment`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(response),
