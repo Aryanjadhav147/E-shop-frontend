@@ -71,7 +71,7 @@ function Home() {
       return;
     }
     addToCart({ ...product, user_id: user.uid || user.id });
-    alert(`${product.name} added to cart!`);
+    // alert(`${product.name} added to cart!`);
   };
 
   const handleBuyNow = (product) => {
