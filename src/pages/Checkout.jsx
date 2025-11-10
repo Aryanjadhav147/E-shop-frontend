@@ -28,8 +28,8 @@ function Checkout() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Use same origin (frontend + backend hosted together)
-  const backendURL = ""; // automatically uses your current domain
+  // ✅ Your backend URL hosted on Render
+  const backendURL = "https://e-shop-backend-icov.onrender.com";
 
   // Load Razorpay script
   const loadRazorpayScript = () => {
@@ -54,8 +54,7 @@ function Checkout() {
       setLoading(true);
       console.log("🚀 Creating order for amount:", total);
 
-      // ✅ No localhost, just relative path
-      const response = await fetch(`/api/payment/create-order`, {
+      const response = await fetch(`${backendURL}/api/payment/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: total }),
@@ -79,8 +78,7 @@ function Checkout() {
           console.log("💳 Payment success:", response);
 
           try {
-            // ✅ Relative path again
-            const verifyRes = await fetch(`/api/payment/verify-payment`, {
+            const verifyRes = await fetch(`${backendURL}/api/payment/verify-payment`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(response),
@@ -189,10 +187,18 @@ function Checkout() {
 
         <h3>Payment Mode</h3>
         <div className="payment-options">
-          <button type="button" className={form.paymentMode === "COD" ? "active" : ""} onClick={() => setForm({ ...form, paymentMode: "COD" })}>
+          <button
+            type="button"
+            className={form.paymentMode === "COD" ? "active" : ""}
+            onClick={() => setForm({ ...form, paymentMode: "COD" })}
+          >
             💵 Cash on Delivery
           </button>
-          <button type="button" className={form.paymentMode === "Online" ? "active" : ""} onClick={() => setForm({ ...form, paymentMode: "Online" })}>
+          <button
+            type="button"
+            className={form.paymentMode === "Online" ? "active" : ""}
+            onClick={() => setForm({ ...form, paymentMode: "Online" })}
+          >
             💳 Razorpay
           </button>
         </div>
