@@ -46,7 +46,7 @@ function Cart({ onClose }) {
   };
 
   // Display count logic
-  const displayCount = cart.length > 0 ? cart.length : ordersCount > 0 ? 1 : 0;
+  const displayCount = cart.length >= 0 ? cart.length : ordersCount > 0 ? 1 : 0;
 
   return (
     <div className="cart-container">

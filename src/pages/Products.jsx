@@ -84,7 +84,7 @@ function Products() {
       alert("⚠️ Please login first!");
       return;
     }
-    addToCart({ ...product, user_id: user.uid || user.id });
+    // addToCart({ ...product, user_id: user.uid || user.id });
     navigate('/checkout');
   };
 

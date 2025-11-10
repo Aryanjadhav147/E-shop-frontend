@@ -28,10 +28,8 @@ function Checkout() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Your backend URL hosted on Render
   const backendURL = "https://e-shop-backend-icov.onrender.com";
 
-  // Load Razorpay script
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -42,7 +40,6 @@ function Checkout() {
     });
   };
 
-  // Razorpay payment
   const handleRazorpayPayment = async () => {
     const res = await loadRazorpayScript();
     if (!res) {
@@ -68,15 +65,13 @@ function Checkout() {
       }
 
       const options = {
-        key: "rzp_test_RdfpsDLziP2e5n", // Razorpay test key
+        key: "rzp_test_RdfpsDLziP2e5n",
         amount: data.amount,
         currency: data.currency,
         name: "E-Shop",
         description: "Order Payment",
         order_id: data.id,
         handler: async function (response) {
-          console.log("💳 Payment success:", response);
-
           try {
             const verifyRes = await fetch(`${backendURL}/api/payment/verify-payment`, {
               method: "POST",
@@ -85,7 +80,6 @@ function Checkout() {
             });
 
             const verifyData = await verifyRes.json();
-            console.log("✅ Verify response:", verifyData);
 
             if (verifyData.success) {
               await saveOrder({
@@ -122,7 +116,6 @@ function Checkout() {
     }
   };
 
-  // Save order to Firestore
   const saveOrder = async (paymentDetails = null) => {
     const orderData = {
       user_id: user?.uid || user?.id,
@@ -160,9 +153,23 @@ function Checkout() {
     else await saveOrder();
   };
 
+  // ✅ Added Back button function
+  const handleBack = () => {
+    navigate(-1); // goes back to previous page
+    // OR use navigate("/cart"); if you want to specifically go to cart page
+  };
+
   return (
     <div className="checkout-container">
-      <h2>Checkout</h2>
+      <div className="checkout-header">
+        <h2>Checkout</h2>
+
+        {/* ✅ Back button */}
+        <button className="back-btn" onClick={handleBack}>
+          ← Back
+        </button>
+      </div>
+
       <div className="checkout-summary">
         <h3>
           Total Amount: <span>₹{total}</span>
