@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore"; // ✅ added updateDoc, doc
 import db from "../firebaseConfig";
 import "../style/orders.css";
 
@@ -17,24 +17,15 @@ function Orders() {
 
     const fetchOrders = async () => {
       try {
-        console.log("Current logged in user:", user); // Debug log
-
-        const q = query(
-          collection(db, "orders"),
-          where("user_id", "==", user.id) // use id from context
-        );
-
+        const q = query(collection(db, "orders"), where("user_id", "==", user.id));
         const snapshot = await getDocs(q);
         const ordersList = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
 
-        // Sort orders by date (newest first) if timestamp exists
         ordersList.sort((a, b) => {
-          if (a.timestamp && b.timestamp) {
-            return b.timestamp - a.timestamp;
-          }
+          if (a.timestamp && b.timestamp) return b.timestamp - a.timestamp;
           return 0;
         });
 
@@ -49,13 +40,34 @@ function Orders() {
     fetchOrders();
   }, [user]);
 
-  // Calculate total for an order
+  // ✅ Function to cancel order
+  const handleCancelOrder = async (orderId) => {
+    const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+    if (!confirmCancel) return;
+
+    try {
+      const orderRef = doc(db, "orders", orderId);
+      await updateDoc(orderRef, { status: "Cancelled" });
+
+      // Update local state so it updates instantly
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId ? { ...order, status: "Cancelled" } : order
+        )
+      );
+
+      alert("Order has been cancelled successfully.");
+    } catch (err) {
+      console.error("Error cancelling order:", err);
+      alert("Failed to cancel the order. Try again.");
+    }
+  };
+
   const calculateTotal = (cart) => {
     if (!cart || !Array.isArray(cart)) return 0;
     return cart.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 0), 0);
   };
 
-  // Format date if timestamp exists
   const formatDate = (timestamp) => {
     if (!timestamp) return "N/A";
     try {
@@ -72,7 +84,6 @@ function Orders() {
     }
   };
 
-  // Render loading state
   if (loading) {
     return (
       <div className="orders-container">
@@ -82,7 +93,6 @@ function Orders() {
     );
   }
 
-  // Render not logged in state
   if (!user) {
     return (
       <div className="orders-container">
@@ -92,7 +102,6 @@ function Orders() {
     );
   }
 
-  // Render no orders state
   if (orders.length === 0) {
     return (
       <div className="orders-container">
@@ -102,11 +111,10 @@ function Orders() {
     );
   }
 
-  // Render orders list
   return (
     <div className="orders-container">
       <h2>Your Orders</h2>
-      
+
       {orders.map((order) => (
         <div className="order-card" key={order.id}>
           <h3>Order ID: {order.id.substring(0, 8)}...</h3>
@@ -158,6 +166,16 @@ function Orders() {
             <span>Total Amount:</span>
             <span>₹{calculateTotal(order.cart).toFixed(2)}</span>
           </h4>
+
+          {/* ✅ Cancel button - only show if order not already cancelled */}
+          {order.status !== "Cancelled" && (
+            <button
+              className="cancel-btn"
+              onClick={() => handleCancelOrder(order.id)}
+            >
+              Cancel Order
+            </button>
+          )}
         </div>
       ))}
     </div>
