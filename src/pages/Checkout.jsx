@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
@@ -7,9 +7,22 @@ import db from "../firebaseConfig";
 import "../style/checkout.css";
 
 function Checkout() {
-  const { cart, clearCart } = useContext(CartContext);
+  const { cart, clearCart, updateQuantity, removeFromCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // BUY NOW PRODUCT (comes from Home / Product page)
+  const buyNowProduct = location.state?.buyNowProduct || null;
+  
+  // State to track Buy Now product quantity (since it's not in cart)
+  const [buyNowQuantity, setBuyNowQuantity] = useState(1);
+
+  // FINAL CART (either BuyNow OR normal cart)
+  const finalCart = buyNowProduct 
+    ? [{ ...buyNowProduct, quantity: buyNowQuantity }] 
+    : cart;
+  const total = finalCart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -22,10 +35,54 @@ function Checkout() {
 
   const [loading, setLoading] = useState(false);
 
-  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Handle quantity increase
+  const handleIncreaseQuantity = (item) => {
+    console.log("Increasing quantity for:", item.id);
+    if (buyNowProduct) {
+      setBuyNowQuantity(prev => prev + 1);
+    } else {
+      updateQuantity(item.id, item.quantity + 1);
+    }
+  };
+
+  // Handle quantity decrease
+  const handleDecreaseQuantity = (item) => {
+    if (item.quantity > 1) {
+      console.log("Decreasing quantity for:", item.id);
+      if (buyNowProduct) {
+        setBuyNowQuantity(prev => prev - 1);
+      } else {
+        updateQuantity(item.id, item.quantity - 1);
+      }
+    } else {
+      alert("Minimum quantity is 1. Use remove button to delete item.");
+    }
+  };
+
+  // Handle remove item
+  const handleRemoveItem = (item) => {
+    console.log("Removing item:", item.id);
+    
+    if (buyNowProduct) {
+      if (window.confirm(`Cancel this order?`)) {
+        navigate(-1); // Go back since there's only one Buy Now item
+      }
+      return;
+    }
+    
+    if (window.confirm(`Remove ${item.name} from cart?`)) {
+      removeFromCart(item.id);
+      
+      // If cart becomes empty after removal, go back
+      if (finalCart.length === 1) {
+        // alert("Cart is empty! Redirecting to products...");
+        navigate("/products");
+      }
+    }
   };
 
   const backendURL = "https://e-shop-backend-icov.onrender.com";
@@ -58,7 +115,6 @@ function Checkout() {
       });
 
       const data = await response.json();
-      console.log("📦 Backend response:", data);
 
       if (!response.ok || !data.id) {
         throw new Error(data.message || "Failed to create Razorpay order");
@@ -71,13 +127,17 @@ function Checkout() {
         name: "E-Shop",
         description: "Order Payment",
         order_id: data.id,
+
         handler: async function (response) {
           try {
-            const verifyRes = await fetch(`${backendURL}/api/payment/verify-payment`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(response),
-            });
+            const verifyRes = await fetch(
+              `${backendURL}/api/payment/verify-payment`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(response),
+              }
+            );
 
             const verifyData = await verifyRes.json();
 
@@ -94,15 +154,18 @@ function Checkout() {
             console.error("❌ Verification Error:", err);
           }
         },
+
         prefill: {
           name: form.fullName,
           email: form.email,
           contact: form.phone,
         },
+
         notes: {
           address: form.address,
           pincode: form.pincode,
         },
+
         theme: { color: "#f8d57e" },
       };
 
@@ -124,7 +187,8 @@ function Checkout() {
       status: "Pending",
       totalAmount: total,
       createdAt: Timestamp.now(),
-      cart: cart.map((item) => ({
+
+      cart: finalCart.map((item) => ({
         product_id: item.id,
         name: item.name,
         price: item.price,
@@ -136,6 +200,7 @@ function Checkout() {
     try {
       await addDoc(collection(db, "orders"), orderData);
       alert("✅ Order placed successfully!");
+
       clearCart();
       navigate("/orders");
     } catch (err) {
@@ -146,53 +211,164 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.paymentMode) return alert("⚠️ Select a payment method!");
-    if (!user) return alert("❌ You must be logged in!");
+    
+    if (finalCart.length === 0) {
+      alert("⚠️ Your cart is empty!");
+      return;
+    }
+    
+    if (!form.paymentMode)
+      return alert("⚠️ Select a payment method!");
+
+    if (!user)
+      return alert("❌ You must be logged in!");
 
     if (form.paymentMode === "Online") await handleRazorpayPayment();
     else await saveOrder();
   };
 
-  // ✅ Added Back button function
   const handleBack = () => {
-    navigate(-1); // goes back to previous page
-    // OR use navigate("/cart"); if you want to specifically go to cart page
+    navigate(-1);
   };
 
   return (
     <div className="checkout-container">
-      <div className="checkout-header">
-        <h2>Checkout</h2>
+      <button className="back-btn" onClick={handleBack}>
+        ← Back
+      </button>
 
-        {/* ✅ Back button */}
-        <button className="back-btn" onClick={handleBack}>
-          ← Back
-        </button>
+      <h2>Checkout</h2>
+
+      {/* Order Items Section */}
+      <div className="order-items-section">
+        <div className="section-header">
+          <h3>Order Items ({finalCart.length})</h3>
+          <Link to="/products" className="add-more-link">
+            + Add More Items
+          </Link>
+        </div>
+
+        <div className="cart-items-list">
+          {finalCart.map((item, index) => (
+            <div key={index} className="checkout-item">
+              <img 
+                src={item.image} 
+                alt={item.name}
+                onError={(e) => {
+                  e.target.src = "/images/placeholder.png";
+                }}
+              />
+              <div className="item-details">
+                <h4>{item.name}</h4>
+                <p className="item-price">₹{item.price}</p>
+                
+                {/* Quantity Controls */}
+                <div className="quantity-controls">
+                  <button 
+                    type="button"
+                    onClick={() => handleDecreaseQuantity(item)}
+                    disabled={item.quantity <= 1}
+                  >
+                    −
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button 
+                    type="button"
+                    onClick={() => handleIncreaseQuantity(item)}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              
+              <div className="item-actions">
+                <div className="item-total">
+                  <p>₹{(item.price * item.quantity).toFixed(2)}</p>
+                </div>
+                <button 
+                  type="button"
+                  className="remove-btn"
+                  onClick={() => handleRemoveItem(item)}
+                  title="Remove item"
+                >
+                  🗑️ Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
+      {/* Order Summary */}
       <div className="checkout-summary">
-        <h3>
-          Total Amount: <span>₹{total}</span>
-        </h3>
-        <p>* Delivered in 3–5 days</p>
+        <h3>Order Summary</h3>
+        <div className="summary-row">
+          <span>Subtotal ({finalCart.length} items):</span>
+          <span>₹{total.toFixed(2)}</span>
+        </div>
+        <div className="summary-row">
+          <span>Delivery Charges:</span>
+          <span className="free">FREE</span>
+        </div>
+        <div className="summary-row total-row">
+          <span>Total Amount:</span>
+          <span>₹{total.toFixed(2)}</span>
+        </div>
+        <p className="delivery-note">* Delivered in 3–5 business days</p>
       </div>
 
+      {/* Checkout Form */}
       <form className="checkout-form" onSubmit={handleSubmit}>
-        <h3>Basic Information</h3>
+        <h3>Shipping Information</h3>
 
         <div className="form-row">
-          <input type="text" name="fullName" placeholder="Full Name" value={form.fullName} onChange={handleChange} required />
-          <input type="text" name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} required />
+          <input
+            type="text"
+            name="fullName"
+            placeholder="Full Name"
+            value={form.fullName}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone Number"
+            value={form.phone}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-row">
-          <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
-          <input type="text" name="pincode" placeholder="Pincode" value={form.pincode} onChange={handleChange} required />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="pincode"
+            placeholder="Pincode"
+            value={form.pincode}
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <textarea name="address" placeholder="Full Address" value={form.address} onChange={handleChange} required></textarea>
+        <textarea
+          name="address"
+          placeholder="Full Address (House No, Street, Locality, City, State)"
+          value={form.address}
+          onChange={handleChange}
+          rows="3"
+          required
+        ></textarea>
 
-        <h3>Payment Mode</h3>
+        <h3>Payment Method</h3>
         <div className="payment-options">
           <button
             type="button"
@@ -201,17 +377,22 @@ function Checkout() {
           >
             💵 Cash on Delivery
           </button>
+
           <button
             type="button"
             className={form.paymentMode === "Online" ? "active" : ""}
             onClick={() => setForm({ ...form, paymentMode: "Online" })}
           >
-            💳 Razorpay
+            💳 Pay with Razorpay
           </button>
         </div>
 
-        <button type="submit" className="place-order" disabled={loading}>
-          {loading ? "Processing..." : form.paymentMode === "Online" ? "Pay Now" : "Place Order"}
+        <button type="submit" className="place-order" disabled={loading || finalCart.length === 0}>
+          {loading
+            ? "Processing..."
+            : form.paymentMode === "Online"
+            ? "Pay Now"
+            : "Place Order"}
         </button>
       </form>
     </div>

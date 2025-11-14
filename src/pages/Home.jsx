@@ -75,13 +75,15 @@ function Home() {
   };
 
   const handleBuyNow = (product) => {
-    if (!user) {
-      alert("Please login first!");
-      return;
-    }
-    // addToCart({ ...product, user_id: user.uid || user.id });
-    navigate('/checkout');
-  };
+  if (!user) {
+    alert("Please login first!");
+    return;
+  }
+
+  navigate('/checkout', {
+    state: { buyNowProduct: { ...product, quantity: 1 } }
+  });
+};
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);

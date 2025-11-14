@@ -79,15 +79,17 @@ function Products() {
     addToCart({ ...product, user_id: user.uid || user.id });
   };
 
+  
   const handleBuyNow = (product) => {
-    if (!user) {
-      alert("⚠️ Please login first!");
-      return;
-    }
-    // addToCart({ ...product, user_id: user.uid || user.id });
-    navigate('/checkout');
-  };
+  if (!user) {
+    alert("Please login first!");
+    return;
+  }
 
+  navigate('/checkout', {
+    state: { buyNowProduct: { ...product, quantity: 1 } }
+  });
+};
   // Get unique categories
   const categories = [
     "All",
