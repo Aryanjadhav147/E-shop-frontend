@@ -201,20 +201,25 @@
   color: #f8d57e;
 }
 
+/* Updated Logout Button: Text Link Style */
 .logout-btn {
-  background: #ff4d4d;
+  background: transparent;
   border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  color: white;
+  color: #e74c3c;
+  font-size: 18px;
   cursor: pointer;
-  transition: background 0.3s;
-  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: 0.3s ease;
 }
 
 .logout-btn:hover {
-  background: #e63939;
+  background: rgba(231, 76, 60, 0.15);
 }
+
+
+
+
 
 /* --- Responsive Design --- */
 @media (max-width: 1024px) {
@@ -251,14 +256,11 @@
   {
       display: none;
   }
-
+  
+  /* The logout button in the auth-buttons container is no longer needed */
   .auth-buttons {
     order: 3;
-  }
-
-  .logout-btn {
-    /* Hide the standalone Logout button from the main bar on mobile */
-    display: none;
+    /* If you move the logout button into nav-links, this only holds Login/Signup */
   }
   
   /* Force search container to wrap to a new line */

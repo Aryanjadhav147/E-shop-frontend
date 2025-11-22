@@ -150,11 +150,11 @@ function Navbar({ openCart }) {
       <div className="auth-buttons">
         {!user && <Link to="/login">Login</Link>}
         {!user && <Link to="/signup">Signup</Link>}
-        {user && (
+        {/* {user && (
           <button className="logout-btn" onClick={logout}>
             Logout
           </button>
-        )}
+        )} */}
       </div>
     </nav>
   );
