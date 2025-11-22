@@ -71,29 +71,30 @@ function Home() {
       return;
     }
     addToCart({ ...product, user_id: user.uid || user.id });
-    // alert(`${product.name} added to cart!`);
+    alert(`${product.name} added to cart!`);
   };
 
   const handleBuyNow = (product) => {
-  if (!user) {
-    alert("Please login first!");
-    return;
-  }
+    if (!user) {
+      alert("Please login first!");
+      return;
+    }
+    addToCart({ ...product, user_id: user.uid || user.id });
+    navigate('/checkout');
+  };
 
-  navigate('/checkout', {
-    state: { buyNowProduct: { ...product, quantity: 1 } }
-  });
-};
-
-  const nextSlide = () => {
+  const nextSlide = (e) => {
+    e?.stopPropagation();
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
-  const prevSlide = () => {
+  const prevSlide = (e) => {
+    e?.stopPropagation();
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  const goToSlide = (index) => {
+  const goToSlide = (index, e) => {
+    e?.stopPropagation();
     setCurrentSlide(index);
   };
 
@@ -110,12 +111,14 @@ function Home() {
               <div
                 key={index}
                 className={`carousel-item ${index === currentSlide ? "active" : ""}`}
+                onClick={() => navigate('/products')}
+                style={{ cursor: 'pointer' }}
               >
                 <img src={slide.image} alt={slide.title} />
                 <div className="carousel-caption">
                   <h1>{slide.title}</h1>
                   <p>{slide.description}</p>
-                  <Link to="/products" className="btn-slider">
+                  <Link to="/products" className="btn-slider" onClick={(e) => e.stopPropagation()}>
                     <span>Shop Now</span>
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -143,7 +146,7 @@ function Home() {
             {slides.map((_, index) => (
               <button
                 key={index}
-                onClick={() => goToSlide(index)}
+                onClick={(e) => goToSlide(index, e)}
                 className={`carousel-indicator ${index === currentSlide ? "active" : ""}`}
               />
             ))}

@@ -13,9 +13,114 @@
   color: #f8d57e;
 }
 
+/* Search Container */
+.search-container {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 20px;
+}
+
+.search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50px;
+  padding: 4px 4px 4px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.search-form:focus-within {
+  box-shadow: 0 4px 12px rgba(248, 213, 126, 0.3);
+  background: white;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  background: transparent;
+  color: #333;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+/* Voice Button */
+.voice-btn {
+  background: linear-gradient(135deg, #f8d57e 0%, #e6b84d 100%);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 6px;
+  color: #1e1e1e;
+}
+
+.voice-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(248, 213, 126, 0.5);
+}
+
+.voice-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Listening Animation */
+.voice-btn.listening {
+  background: linear-gradient(135deg, #ff4d4d 0%, #e63939 100%);
+  color: white;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Search Button */
+.search-btn {
+  background: linear-gradient(135deg, #f8d57e 0%, #e6b84d 100%);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #1e1e1e;
+}
+
+.search-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(248, 213, 126, 0.5);
+}
+
+.search-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.5;
+}
+
 .nav-links {
   display: flex;
-  align-items: center; /* ✅ keeps items vertically aligned */
+  align-items: center;
   gap: 1.5rem;
   list-style: none;
 }
@@ -31,21 +136,31 @@
 }
 
 .cart-btn {
-  position: relative; /* ✅ allows badge positioning */
+  position: relative;
   background: none;
   border: none;
   color: white;
   font-size: 1rem;
   cursor: pointer;
   display: flex;
-  align-items: center; /* keeps text & badge aligned */
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s;
+}
+
+.cart-btn:hover {
+  color: #f8d57e;
+}
+
+.cart-btn svg {
+  stroke-width: 2;
 }
 
 .cart-badge {
   position: absolute;
-  top: -6px;   /* adjust vertical placement */
-  right: -12px; /* adjust horizontal placement */
-  background: red;
+  top: -6px;
+  right: -12px;
+  background: #ff4d4d;
   color: white;
   font-size: 0.7rem;
   font-weight: bold;
@@ -56,11 +171,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
 }
 
 .auth-buttons {
   display: flex;
   gap: 1rem;
+}
+
+.auth-buttons a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s;
 }
 
 .auth-buttons a:hover {
@@ -75,13 +206,99 @@
   color: white;
   cursor: pointer;
   transition: background 0.3s;
+  font-weight: 600;
 }
 
 .logout-btn:hover {
   background: #e63939;
 }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .search-container {
+    max-width: 350px;
+    margin: 0 15px;
+  }
+}
+
 @media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 15px 20px;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+  }
+
+  .search-container {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: 100%;
+    margin: 15px 0 0 0;
+  }
+
+  .search-form {
+    padding: 3px 3px 3px 15px;
+  }
+
+  .search-input {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .voice-btn,
+  .search-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .voice-btn svg,
+  .search-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .nav-links {
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+
   .logout-btn {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 12px 15px;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .search-input {
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+
+  .voice-btn,
+  .search-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .nav-links {
+    gap: 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .auth-buttons {
+    gap: 0.5rem;
+  }
+
+  .auth-buttons a {
+    font-size: 0.85rem;
   }
 }

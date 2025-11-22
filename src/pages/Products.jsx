@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import "../style/products.css";
@@ -25,7 +25,6 @@ function ProductCard({ product, handleAddToCart, handleBuyNow }) {
         />
         <h3>{product.name || product.title}</h3>
       </Link>
-      {product.category && <p className="category">{product.category}</p>}
       <p className="price">₹{product.price?.toFixed(2) || "0.00"}</p>
       <div className="product-buttons">
         <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
@@ -43,11 +42,23 @@ function Products() {
   const { addToCart, toast } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+
+  // Handle URL search parameters from navbar
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get('search');
+    if (query) {
+      setSearchTerm(query);
+      // Scroll to products section
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -79,29 +90,69 @@ function Products() {
     addToCart({ ...product, user_id: user.uid || user.id });
   };
 
-  
   const handleBuyNow = (product) => {
-  if (!user) {
-    alert("Please login first!");
-    return;
-  }
+    if (!user) {
+      alert("⚠️ Please login first!");
+      return;
+    }
+    addToCart({ ...product, user_id: user.uid || user.id });
+    navigate('/checkout');
+  };
 
-  navigate('/checkout', {
-    state: { buyNowProduct: { ...product, quantity: 1 } }
-  });
-};
   // Get unique categories
   const categories = [
     "All",
     ...new Set(products.map((p) => p.category).filter(Boolean)),
   ];
 
-  // Filter products based on search and category
+  // Simple fuzzy match helper (checks if strings are similar)
+  const isSimilar = (str1, str2) => {
+    str1 = str1.toLowerCase();
+    str2 = str2.toLowerCase();
+    
+    // Exact match
+    if (str1 === str2) return true;
+    
+    // One contains the other
+    if (str1.includes(str2) || str2.includes(str1)) return true;
+    
+    // Check Levenshtein distance for typos (max 2 character difference)
+    if (Math.abs(str1.length - str2.length) > 2) return false;
+    
+    let distance = 0;
+    const len1 = str1.length;
+    const len2 = str2.length;
+    
+    for (let i = 0; i < Math.min(len1, len2); i++) {
+      if (str1[i] !== str2[i]) distance++;
+      if (distance > 2) return false;
+    }
+    
+    distance += Math.abs(len1 - len2);
+    return distance <= 2;
+  };
+
+  // Filter products based on search and category with flexible matching
   const filteredProducts = products.filter((product) => {
-    const matchesSearch = 
-      (product.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (product.title?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (product.description?.toLowerCase() || "").includes(searchTerm.toLowerCase());
+    if (searchTerm.trim() === "") {
+      return selectedCategory === "All" || product.category === selectedCategory;
+    }
+
+    // Split search term into individual words
+    const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
+    
+    // Combine all searchable fields
+    const productWords = [
+      product.name?.toLowerCase() || "",
+      product.title?.toLowerCase() || "",
+      product.description?.toLowerCase() || "",
+      product.category?.toLowerCase() || ""
+    ].join(" ").split(/\s+/);
+
+    // Check if ANY search word matches ANY product word (with fuzzy matching)
+    const matchesSearch = searchWords.some(searchWord => 
+      productWords.some(productWord => isSimilar(searchWord, productWord))
+    );
 
     const matchesCategory =
       selectedCategory === "All" || product.category === selectedCategory;
