@@ -13,7 +13,7 @@
   color: #f8d57e;
 }
 
-/* Search Container */
+/* --- Search Container --- */
 .search-container {
   flex: 1;
   max-width: 500px;
@@ -118,6 +118,7 @@
   stroke-width: 2.5;
 }
 
+/* --- Nav Links --- */
 .nav-links {
   display: flex;
   align-items: center;
@@ -135,6 +136,7 @@
   color: #f8d57e;
 }
 
+/* Cart Button with Badge */
 .cart-btn {
   position: relative;
   background: none;
@@ -183,6 +185,7 @@
   }
 }
 
+/* --- Auth Buttons --- */
 .auth-buttons {
   display: flex;
   gap: 1rem;
@@ -213,7 +216,7 @@
   background: #e63939;
 }
 
-/* Responsive Design */
+/* --- Responsive Design --- */
 @media (max-width: 1024px) {
   .search-container {
     max-width: 350px;
@@ -225,14 +228,42 @@
   .navbar {
     flex-wrap: wrap;
     padding: 15px 20px;
+    justify-content: flex-start; /* Start items from the left */
+    gap: 15px;
   }
 
   .logo {
     font-size: 1.3rem;
+    order: 1; /* Logo stays on top-left */
   }
 
-  .search-container {
+  /* Keep essential links (Cart/Orders/Profile) visible, push them right */
+  .nav-links {
+    order: 2;
+    margin-left: auto; /* Pushes links to the far right */
+    gap: 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Hide Home and Products links to declutter the top bar on small screens */
+  .nav-links li:nth-child(1), /* Home */
+  .nav-links li:nth-child(2)  /* Products */
+  {
+      display: none;
+  }
+
+  .auth-buttons {
     order: 3;
+  }
+
+  .logout-btn {
+    /* Hide the standalone Logout button from the main bar on mobile */
+    display: none;
+  }
+  
+  /* Force search container to wrap to a new line */
+  .search-container {
+    order: 4;
     flex: 1 1 100%;
     max-width: 100%;
     margin: 15px 0 0 0;
@@ -257,15 +288,6 @@
   .search-btn svg {
     width: 18px;
     height: 18px;
-  }
-
-  .nav-links {
-    gap: 1rem;
-    font-size: 0.9rem;
-  }
-
-  .logout-btn {
-    display: none;
   }
 }
 
